@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app_windmill')
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-8">
   <div class="flex items-center justify-between mb-6">

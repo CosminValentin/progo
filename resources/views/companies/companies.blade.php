@@ -1,48 +1,119 @@
-@extends('layouts.app')
-@section('content')
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-semibold">Empresas</h1>
-    <a href="{{ url('/addcompany') }}" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Nueva</a>
-  </div>
+@extends('layouts.app_windmill')
 
-  <form method="GET" action="{{ url('/companies') }}" class="mb-4">
-    <div class="flex gap-2">
-      <input type="text" name="q" placeholder="Buscar por CIF/NIF, nombre o contacto" class="w-full rounded border px-3 py-2"/>
-      <button class="rounded bg-gray-800 px-4 py-2 text-white hover:bg-black">Buscar</button>
+@section('header')
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-indigo-700 dark:text-indigo-400">Empresas</h1>
+      <p class="text-sm text-gray-600 dark:text-slate-400">Listado y gestión de empresas.</p>
+    </div>
+    <a href="{{ route('addcompany') }}"
+       class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg transition">
+      <i class="fa-solid fa-plus"></i> Nueva
+    </a>
+  </div>
+@endsection
+
+@section('content')
+  @if(session('success'))
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900 dark:text-emerald-100 shadow">
+      {{ session('success') }}
+    </div>
+  @endif
+
+  @if(session('error'))
+    <div class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-800 dark:border-rose-600 dark:bg-rose-900 dark:text-rose-100 shadow">
+      {{ session('error') }}
+    </div>
+  @endif
+
+  <!-- Search Form -->
+  <form method="GET" action="{{ route('companies') }}" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="col-span-2">
+      <div class="relative">
+        <input type="text" name="q" value="{{ $q ?? '' }}"
+               placeholder="Buscar por CIF/NIF, nombre, actividad o email…"
+               class="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm px-10 py-3 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 shadow-sm transition">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <button class="flex-1 px-5 py-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition shadow">Buscar</button>
+      <a href="{{ route('companies') }}"
+         class="flex-1 px-5 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition shadow">Limpiar</a>
     </div>
   </form>
 
-  <div class="overflow-x-auto rounded border bg-white">
-    <table class="min-w-full divide-y">
-      <thead class="bg-gray-50">
+  <!-- Table -->
+  <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
+    <table class="min-w-full">
+      <thead class="bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700 dark:text-slate-200">
         <tr>
-          <th class="px-3 py-2 text-left text-sm font-semibold">ID</th>
-          <th class="px-3 py-2 text-left text-sm font-semibold">CIF/NIF</th>
-          <th class="px-3 py-2 text-left text-sm font-semibold">Nombre</th>
-          <th class="px-3 py-2 text-left text-sm font-semibold">Ámbito</th>
-          <th class="px-3 py-2"></th>
+          <th class="px-5 py-3">CIF/NIF</th>
+          <th class="px-5 py-3">Nombre</th>
+          <th class="px-5 py-3 hidden lg:table-cell">Actividad</th>
+          <th class="px-5 py-3 hidden md:table-cell">Contacto</th>
+          <th class="px-5 py-3 text-right">Acciones</th>
         </tr>
       </thead>
-      <tbody class="divide-y">
-        <tr class="hover:bg-gray-50">
-          <td class="px-3 py-2 text-sm">—</td>
-          <td class="px-3 py-2 text-sm">—</td>
-          <td class="px-3 py-2 text-sm">—</td>
-          <td class="px-3 py-2 text-sm">—</td>
-          <td class="px-3 py-2 text-sm">
-            <div class="flex gap-2 justify-end">
-              <a href="{{ url('/viewcompany/1') }}" class="text-blue-700 hover:underline">Ver</a>
-              <a href="{{ url('/editcompany/1') }}" class="text-amber-700 hover:underline">Editar</a>
-              <form method="POST" action="{{ url('/deletecompany/1') }}" onsubmit="return confirm('¿Eliminar?')">
-                @csrf
-                <button class="text-red-700 hover:underline">Borrar</button>
-              </form>
-            </div>
-          </td>
-        </tr>
+      <tbody class="divide-y divide-gray-100 dark:divide-slate-700 text-sm">
+        @forelse($companies as $c)
+          <tr class="hover:bg-indigo-50 dark:hover:bg-slate-700/30 transition">
+            <td class="px-5 py-4 font-semibold text-indigo-700 dark:text-indigo-300">{{ $c->cif_nif }}</td>
+            <td class="px-5 py-4 text-gray-700 dark:text-slate-300">{{ $c->nombre }}</td>
+            <td class="px-5 py-4 hidden lg:table-cell text-gray-600 dark:text-slate-400">{{ $c->actividad ?: '—' }}</td>
+            <td class="px-5 py-4 hidden md:table-cell">
+              <div class="flex flex-col">
+                <span class="text-gray-800 dark:text-white">{{ $c->contacto_nombre ?: '—' }}</span>
+                <span class="text-xs text-gray-500 dark:text-slate-400">{{ $c->contacto_email ?: '' }}</span>
+              </div>
+            </td>
+            <td class="px-5 py-4">
+              <div class="flex justify-end gap-2" x-data="{open:false}">
+                <a href="{{ route('viewcompany', $c) }}"
+                   class="px-3 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition">Ver</a>
+                <a href="{{ route('editcompany', $c) }}"
+                   class="px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition">Editar</a>
+                <button @click="open=true"
+                        class="px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition">Borrar</button>
+
+                <!-- Modal -->
+                <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="open=false"></div>
+                  <div x-transition class="relative w-full max-w-md rounded-xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
+                    <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
+                      <h3 class="text-lg font-semibold text-center text-red-600 dark:text-red-400">Confirmar eliminación</h3>
+                      <p class="mt-2 text-sm text-center text-gray-600 dark:text-slate-300">
+                        ¿Eliminar <strong>{{ $c->nombre }}</strong> ({{ $c->cif_nif }})?
+                      </p>
+                    </div>
+                    <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
+                      <button @click="open=false"
+                              class="px-4 py-2.5 w-full sm:w-auto rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 transition">Cancelar</button>
+                      <form method="POST" action="{{ route('deletecompany', $c) }}">
+                        @csrf
+                        <button
+                          class="px-4 py-2.5 w-full sm:w-auto rounded-lg bg-gradient-to-r from-red-600 to-rose-600 text-white hover:from-red-700 hover:to-rose-700 transition shadow-md">Sí, eliminar</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Modal -->
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="5" class="px-5 py-12 text-center text-gray-500 dark:text-slate-400 italic">No hay empresas registradas.</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
   </div>
-</div>
+
+  <!-- Pagination -->
+  <div class="mt-6 text-center">
+    <div class="inline-block rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 shadow-md">
+      {{ $companies->onEachSide(1)->links('pagination::tailwind') }}
+    </div>
+  </div>
 @endsection

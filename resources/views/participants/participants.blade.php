@@ -1,145 +1,128 @@
-@extends('layouts.app')
+@extends('layouts.app_windmill')
 
-@section('content')
-<div class="max-w-7xl mx-auto px-6 py-10 rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-sky-50 shadow-xl" x-data="{ showAlert: true }">
-
-  <!-- Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 border-b pb-5">
+@section('header')
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-700 to-sky-600 bg-clip-text text-transparent">
-        Participantes
-      </h1>
-      <p class="text-sm text-indigo-500 mt-1">Gestiona altas, ediciones y bajas de participantes.</p>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-slate-100">Participantes</h1>
+      <p class="text-sm text-gray-500 dark:text-slate-400">Gestiona altas, ediciones y bajas.</p>
     </div>
     <a href="{{ route('addparticipant') }}"
-       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold shadow hover:shadow-lg hover:scale-[1.02] active:scale-100 transition-all">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      Nuevo
+       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">
+      <i class="fa-solid fa-plus"></i> Nuevo
     </a>
   </div>
+@endsection
 
-  <!-- Alert -->
-  @if(session('success'))
-    <div x-show="showAlert"
-         class="mb-6 rounded-xl border border-emerald-200/70 bg-emerald-50 p-4 text-emerald-800 shadow-sm">
-      <div class="flex items-start gap-3">
-        <svg class="h-5 w-5 mt-0.5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-        </svg>
-        <div class="flex-1">
-          <strong class="block">Operación correcta</strong>
-          <span class="text-sm">{{ session('success') }}</span>
-        </div>
-        <button class="rounded-full px-2 text-emerald-900/70 hover:text-emerald-900" @click="showAlert=false">✕</button>
+@section('content')
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Total</div>
+      <div class="mt-1 flex items-baseline gap-2">
+        <div class="text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ number_format($participants->total()) }}</div>
+        <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">live</span>
       </div>
     </div>
-  @endif
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Página</div>
+      <div class="mt-1 text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ $participants->currentPage() }}/{{ $participants->lastPage() }}</div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Mostrando</div>
+      <div class="mt-1 text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ $participants->count() }}</div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Estado</div>
+      <div class="mt-1 flex items-center gap-2">
+        <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-300 text-sm">
+          <i class="fa-solid fa-circle text-[8px]"></i> Activo
+        </span>
+      </div>
+    </div>
+  </div>
 
-  <!-- Filtros -->
-  <form method="GET" action="{{ route('participants') }}"
-        class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+  <form method="GET" action="{{ route('participants') }}" class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
     <div class="col-span-2">
-      <label class="sr-only">Buscar</label>
       <div class="relative">
-        <input type="text" name="q" value="{{ $q ?? '' }}"
-               placeholder="Buscar por DNI/NIE, nombre o email…"
-               class="w-full rounded-xl border border-gray-200/80 bg-white/80 backdrop-blur px-4 py-2.5 pr-10 shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/>
-        </svg>
+        <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Buscar por DNI/NIE, nombre o email…"
+               class="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm px-9 py-2
+                      placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
       </div>
     </div>
     <div class="flex gap-2">
-      <button
-        class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 shadow-sm hover:shadow transition">
-        Buscar
-      </button>
-      <a href="{{ route('participants') }}"
-         class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 shadow-sm hover:shadow transition">
-        Limpiar
-      </a>
+      <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm hover:bg-gray-50 dark:hover:bg-slate-700">Buscar</button>
+      <a href="{{ route('participants') }}" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm hover:bg-gray-50 dark:hover:bg-slate-700">Limpiar</a>
     </div>
   </form>
 
-  <!-- Tabla -->
-  <div class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-lg">
+  <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow">
     <table class="min-w-full">
-      <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+      <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-slate-300">
         <tr>
-          <th class="px-5 py-3">DNI/NIE</th>
-          <th class="px-5 py-3">Nombre</th>
-          <th class="px-5 py-3 hidden md:table-cell">Email</th>
-          <th class="px-5 py-3 hidden lg:table-cell">Provincia</th>
-          <th class="px-5 py-3 text-right">Acciones</th>
+          <th class="px-4 py-3">DNI/NIE</th>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3 hidden md:table-cell">Email</th>
+          <th class="px-4 py-3 hidden lg:table-cell">Provincia</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-100">
-        @forelse ($participants as $p)
-          <tr class="odd:bg-white even:bg-gray-50/60 hover:bg-indigo-50/50 transition">
-            <td class="px-5 py-3 text-sm font-semibold text-gray-800">{{ $p->dni_nie }}</td>
-            <td class="px-5 py-3 text-sm text-gray-700">{{ $p->nombre }}</td>
-            <td class="px-5 py-3 text-sm text-gray-600 hidden md:table-cell">{{ $p->email }}</td>
-            <td class="px-5 py-3 text-sm text-gray-600 hidden lg:table-cell">
+      <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
+        @forelse($participants as $p)
+          <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/40 transition">
+            <td class="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-100">{{ $p->dni_nie }}</td>
+            <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-200">{{ $p->nombre }}</td>
+            <td class="px-4 py-3 text-sm text-gray-600 dark:text-slate-300 hidden md:table-cell">{{ $p->email }}</td>
+            <td class="px-4 py-3 text-sm text-gray-600 dark:text-slate-300 hidden lg:table-cell">
               <span class="inline-flex items-center gap-2">
                 {{ $p->provincia }}
                 @if($p->estado)
-                  <span class="ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide shadow
-                               {{ $p->estado==='activo'
-                                  ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                                  : 'bg-amber-100 text-amber-700 border border-amber-200' }}">
+                  <span class="ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide
+                               border border-emerald-200 bg-emerald-50 text-emerald-700
+                               dark:border-emerald-700/40 dark:bg-emerald-900/30 dark:text-emerald-200">
                     {{ ucfirst($p->estado) }}
                   </span>
                 @endif
               </span>
             </td>
-            <td class="px-5 py-3 text-sm">
-              <div class="flex justify-end flex-wrap gap-2">
-                <a href="{{ route('viewparticipant', $p) }}"
-                   class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:shadow transition">
-                  Ver
-                </a>
-                <a href="{{ route('editparticipant', $p) }}"
-                   class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:shadow transition">
-                  Editar
-                </a>
-                <form action="{{ route('deleteparticipant', $p) }}" method="POST"
-                      x-data
-                      @submit.prevent="if(confirm('¿Eliminar a {{ $p->nombre }}?')) $el.submit()">
-                  @csrf
-                  <button
-                    class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:shadow transition">
-                    Borrar
-                  </button>
-                </form>
+            <td class="px-4 py-3 text-sm">
+              <div class="flex justify-end gap-2" x-data="{ open:false }">
+                <a href="{{ route('viewparticipant', $p) }}" class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-100 hover:bg-gray-50 dark:hover:bg-slate-700/60">Ver</a>
+                <a href="{{ route('editparticipant', $p) }}" class="px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:border-indigo-800 dark:text-indigo-200 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/40">Editar</a>
+                <button @click="open=true" class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 dark:border-rose-800 dark:text-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/40">Borrar</button>
+
+                <!-- Modal -->
+                <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                  <div class="absolute inset-0 bg-black/40" @click="open=false"></div>
+                  <div x-transition class="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+                    <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
+                      <h3 class="text-lg font-semibold text-center">Confirmar eliminación</h3>
+                      <p class="mt-1 text-sm text-center text-gray-500 dark:text-slate-300">¿Eliminar <strong>{{ $p->nombre }}</strong> ({{ $p->dni_nie }})?</p>
+                    </div>
+                    <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
+                      <button @click="open=false" class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/60">Cancelar</button>
+                      <form method="POST" action="{{ route('deleteparticipant', $p) }}">
+                        @csrf
+                        <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">Sí, eliminar</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Modal -->
               </div>
             </td>
           </tr>
         @empty
           <tr>
-            <td colspan="5" class="px-5 py-12 text-center">
-              <div class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-500 shadow-sm">
-                <svg class="h-4 w-4 opacity-70" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M9 17v-6a2 2 0 114 0v6m-6 4h8a2 2 0 002-2v-5a8 8 0 10-12 0v5a2 2 0 002 2z"/></svg>
-                No hay participantes todavía.
-              </div>
-            </td>
+            <td colspan="5" class="px-4 py-10 text-center text-gray-500 dark:text-slate-400">No hay participantes todavía.</td>
           </tr>
         @endforelse
       </tbody>
     </table>
   </div>
 
-  <!-- Paginación -->
-  <div class="mt-8">
-    <div class="inline-block rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
-      {{ $participants->links() }}
+  <div class="mt-6">
+    <div class="inline-block rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 shadow">
+      {{ $participants->onEachSide(1)->links('pagination::tailwind') }}
     </div>
   </div>
-</div>
 @endsection

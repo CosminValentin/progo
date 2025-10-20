@@ -3,10 +3,10 @@
 @section('header')
   <div class="flex items-end justify-between">
     <div>
-      <h1 class="text-2xl font-bold">Nuevo participante</h1>
-      <p class="text-sm text-gray-500 dark:text-slate-400">Completa los datos y guarda para dar de alta.</p>
+      <h1 class="text-2xl font-bold">Nueva empresa</h1>
+      <p class="text-sm text-gray-500 dark:text-slate-400">Completa los datos y guarda.</p>
     </div>
-    <a href="{{ route('participants') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
+    <a href="{{ route('companies') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
   </div>
 @endsection
 
@@ -20,12 +20,12 @@
     </div>
   @endif
 
-  <form method="POST" action="{{ route('saveparticipant') }}"
+  <form method="POST" action="{{ route('savecompany') }}"
         class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
     @csrf
-    @include('participants._form')
+    @include('companies._form')
     <div class="flex items-center justify-end gap-2">
-      <a href="{{ route('participants') }}" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Cancelar</a>
+      <a href="{{ route('companies') }}" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Cancelar</a>
       <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Guardar</button>
     </div>
   </form>

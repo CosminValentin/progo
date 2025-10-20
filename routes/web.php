@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParticipantsController;
+use App\Http\Controllers\CompaniesController;
+use App\Http\Controllers\HomeController;
 
 // Raíz → login
 Route::get('/', fn () => redirect()->route('login'));
@@ -11,8 +13,8 @@ require __DIR__ . '/auth.php';
 
 // Área privada
 Route::middleware('auth')->group(function () {
-    Route::get('/home', fn () => view('home'))->name('home');
-
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/metrics', [HomeController::class, 'metrics'])->name('metrics'); // <- NUEVA
     // LISTADO
     Route::get('/participants', [ParticipantsController::class,'participants'])->name('participants');
 
@@ -29,5 +31,18 @@ Route::middleware('auth')->group(function () {
 
     // BORRAR
     Route::post('/deleteparticipant/{participant}', [ParticipantsController::class,'deleteParticipant'])->name('deleteparticipant');
+
+    //
+    Route::get('/companies', [CompaniesController::class, 'companies'])->name('companies');
+
+    Route::get('/addcompany', [CompaniesController::class, 'addCompany'])->name('addcompany');
+    Route::post('/savecompany', [CompaniesController::class, 'saveCompany'])->name('savecompany');
+
+    Route::get('/viewcompany/{company}', [CompaniesController::class, 'viewCompany'])->name('viewcompany');
+
+    Route::get('/editcompany/{company}', [CompaniesController::class, 'editCompany'])->name('editcompany');
+    Route::post('/updatecompany/{company}', [CompaniesController::class, 'updateCompany'])->name('updatecompany');
+
+    Route::post('/deletecompany/{company}', [CompaniesController::class, 'deleteCompany'])->name('deletecompany');
 });
 

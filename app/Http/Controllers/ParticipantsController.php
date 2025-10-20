@@ -31,7 +31,7 @@ class ParticipantsController extends Controller
                 });
             })
             ->orderByDesc('id')
-            ->paginate(10)
+            ->paginate(5)
             ->withQueryString();
 
         return view('participants.participants', compact('participants', 'q'));
