@@ -32,17 +32,19 @@ Route::middleware('auth')->group(function () {
     // BORRAR
     Route::post('/deleteparticipant/{participant}', [ParticipantsController::class,'deleteParticipant'])->name('deleteparticipant');
 
-    //
+    // Listado
     Route::get('/companies', [CompaniesController::class, 'companies'])->name('companies');
 
+    // Crear
     Route::get('/addcompany', [CompaniesController::class, 'addCompany'])->name('addcompany');
     Route::post('/savecompany', [CompaniesController::class, 'saveCompany'])->name('savecompany');
 
+    // Ver / Editar / Actualizar
     Route::get('/viewcompany/{company}', [CompaniesController::class, 'viewCompany'])->name('viewcompany');
-
     Route::get('/editcompany/{company}', [CompaniesController::class, 'editCompany'])->name('editcompany');
     Route::post('/updatecompany/{company}', [CompaniesController::class, 'updateCompany'])->name('updatecompany');
 
+    // Borrar
     Route::post('/deletecompany/{company}', [CompaniesController::class, 'deleteCompany'])->name('deletecompany');
 });
 

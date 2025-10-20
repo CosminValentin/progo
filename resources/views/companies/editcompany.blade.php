@@ -1,36 +1,64 @@
 @extends('layouts.app_windmill')
 
 @section('header')
-  <div class="flex items-end justify-between">
-    <div>
-      <h1 class="text-2xl font-bold">Editar empresa</h1>
-      <p class="text-sm text-gray-500 dark:text-slate-400">Actualiza la información de <strong>{{ $company->nombre }}</strong>.</p>
-    </div>
-  </div>
+  <h1 class="text-2xl font-bold">Editar empresa</h1>
 @endsection
 
 @section('content')
-  <div x-data="{open:false}">
-    @if ($errors->any())
-      <div class="mb-6 rounded-xl border border-rose-200/80 bg-rose-50 p-4 text-rose-800 shadow-sm dark:border-rose-700/40 dark:bg-rose-900/30 dark:text-rose-200">
-        <strong class="block mb-1">Corrige los errores</strong>
-        <ul class="text-sm list-disc list-inside">
-          @foreach ($errors->all() as $e) <li>{{ $e }}</li> @endforeach
-        </ul>
+<div x-data="{ open:false }">
+  @if ($errors->any())
+    <div class="mb-6 rounded-xl border border-rose-200/80 bg-rose-50 p-4 text-rose-800 shadow-sm">
+      <div class="text-sm font-semibold mb-1">Corrige los errores</div>
+      <ul class="text-sm list-disc list-inside">
+        @foreach ($errors->all() as $e) <li>{{ $e }}</li> @endforeach
+      </ul>
+    </div>
+  @endif
+
+  <form method="POST" action="{{ route('updatecompany', $company) }}" class="rounded-2xl border border-gray-200/80 bg-white dark:bg-slate-800 p-6 shadow-lg space-y-6">
+    @csrf
+
+    @include('companies._form', ['company' => $company])
+
+    <div class="flex items-center justify-between pt-4">
+      <a href="{{ route('companies') }}" class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 shadow-sm transition">
+        ← Volver
+      </a>
+
+      <div class="flex gap-3">
+        <button type="button" @click="open = true" class="px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:shadow transition">
+          Borrar
+        </button>
+        <button class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold shadow hover:shadow-lg hover:scale-[1.02] active:scale-100 transition-all">
+          Guardar cambios
+        </button>
       </div>
-    @endif
+    </div>
+  </form>
 
-    <form method="POST" action="{{ route('updatecompany', $company) }}"
-          class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
-      @csrf
-      @include('companies._form', ['company' => $company])
-
-      <div class="flex items-center justify-between pt-2">
-        <a href="{{ route('companies') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
-
-        <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Guardar cambios</button>
+  <!-- Modal eliminar -->
+  <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" @click="open=false"></div>
+    <div x-transition class="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/5">
+      <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
+        <h3 class="text-lg font-semibold text-center text-gray-800 dark:text-white">Eliminar empresa</h3>
+        <p class="mt-1 text-sm text-center text-gray-500 dark:text-slate-300">
+          ¿Eliminar <strong>{{ $company->nombre }}</strong> ({{ $company->cif_nif }})?
+        </p>
       </div>
-    </form>
-
-
+      <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
+        <button @click="open=false" class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 shadow-sm transition">
+          Cancelar
+        </button>
+        <form method="POST" action="{{ route('deletecompany', $company) }}">
+          @csrf
+          <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white font-semibold shadow hover:shadow-lg transition">
+            Sí, eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /Modal -->
+</div>
 @endsection
