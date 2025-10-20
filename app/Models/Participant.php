@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +7,7 @@ class Participant extends Model
 {
     protected $table = 'participants';
     protected $primaryKey = 'id';
-    public $timestamps = false; // tu tabla no tiene created_at/updated_at
+    public $timestamps = false;
 
     protected $fillable = [
         'dni_nie','nombre','telefono','email','fecha_alta_prog',
@@ -17,6 +16,6 @@ class Participant extends Model
 
     protected $casts = [
         'fecha_alta_prog' => 'date',
-        'consent_rgpd'    => 'boolean',
+        'consent_rgpd' => 'boolean',
     ];
 }
