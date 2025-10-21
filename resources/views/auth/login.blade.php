@@ -1,47 +1,71 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.auth')
+@section('title','Entrar · PRO-GO')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('content')
+<div class="min-h-dvh flex items-center justify-center px-4 py-10">
+  <div class="w-full max-w-md">
+    {{-- Card --}}
+    <div class="bg-white/80 backdrop-blur rounded-3xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+      {{-- Header --}}
+      <div class="px-8 pt-8 pb-6 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+        <h1 class="text-2xl font-bold tracking-tight">Bienvenido a PRO-GO</h1>
+        <p class="text-white/90 mt-1">Inicia sesión para continuar</p>
+      </div>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+      {{-- Body --}}
+      <div class="px-8 py-6">
+        @if(session('status'))
+          <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 px-4 py-3">
+            {{ session('status') }}
+          </div>
+        @endif
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        @if($errors->any())
+          <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3">
+            {{ $errors->first() }}
+          </div>
+        @endif
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <form action="{{ route('login') }}" method="POST" class="space-y-5">
+          @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre o correo electrónico</label>
+            <input type="text" name="login" value="{{ old('login') }}" required autofocus
+                   class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition" />
+          </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+              <a class="text-sm text-indigo-600 hover:underline" href="#">¿Olvidaste la contraseña?</a>
+            </div>
+            <input type="password" name="password" required
+                   class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 transition" />
+          </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+          <label class="flex items-center gap-2 select-none">
+            <input type="checkbox" name="remember" class="rounded border-gray-300 text-brand focus:ring-brand" />
+            <span class="text-sm text-gray-700">Recordarme en este equipo</span>
+          </label>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+          <button class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-2xl bg-brand text-dark font-semibold shadow hover:brightness-105 active:scale-[0.99] transition">
+            Iniciar sesión
+          </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-600 mt-6">
+          ¿No tienes cuenta?
+          <a href="{{ route('register') }}" class="text-indigo-600 hover:underline font-medium">Crear cuenta</a>
+        </p>
+      </div>
+    </div>
+
+    {{-- Footer --}}
+    <p class="text-center text-xs text-gray-500 mt-6">
+      © {{ date('Y') }} PRO-GO · Seguridad por sesión y CSRF activas
+    </p>
+  </div>
+</div>
+@endsection
+ 
