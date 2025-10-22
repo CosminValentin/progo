@@ -6,7 +6,6 @@ use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
-// Raíz → login
 Route::get('/', fn () => redirect()->route('login'));
 
 // Rutas de Breeze (login, register, logout, etc.)
