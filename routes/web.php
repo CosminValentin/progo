@@ -22,23 +22,15 @@ Route::post('register', [RegisteredUserController::class, 'store']);
 Route::middleware('auth')->group(function () {
     // Home y métricas
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/metrics', [HomeController::class, 'metrics'])->name('metrics'); // NUEVA
+    Route::get('/metrics', [HomeController::class, 'metrics'])->name('metrics');
 
     // Rutas de Participantes
     Route::get('/participants', [ParticipantsController::class,'participants'])->name('participants');
-
-    // CREAR
     Route::get('/addparticipant', [ParticipantsController::class,'addParticipant'])->name('addparticipant');
     Route::post('/saveparticipant', [ParticipantsController::class,'saveParticipant'])->name('saveparticipant');
-
-    // VER FICHA
     Route::get('/viewparticipant/{participant}', [ParticipantsController::class,'viewParticipant'])->name('viewparticipant');
-
-    // EDITAR
     Route::get('/editparticipant/{participant}', [ParticipantsController::class,'editParticipant'])->name('editparticipant');
     Route::post('/updateparticipant/{participant}', [ParticipantsController::class,'updateParticipant'])->name('updateparticipant');
-
-    // BORRAR
     Route::post('/deleteparticipant/{participant}', [ParticipantsController::class,'deleteParticipant'])->name('deleteparticipant');
 
     // Rutas de Empresas
