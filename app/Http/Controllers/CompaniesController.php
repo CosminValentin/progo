@@ -20,8 +20,8 @@ class CompaniesController extends Controller
                    ->orWhere('contacto_email', 'like', "%{$q}%");
             })
             ->orderBy('nombre')
-            ->paginate(5)             
-            ->withQueryString();        
+            ->paginate(5)
+            ->withQueryString();
 
         return view('companies.index', compact('companies','q'));
     }
