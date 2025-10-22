@@ -108,10 +108,10 @@
                       </p>
                     </div>
                     <div class="flex items-center justify-center gap-4 p-6">
-                      <form method="POST" action="{{ route('deletecompany', $c) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg">Eliminar</button>
+                      <form action="{{ route('deletecompany', $c->id) }}" method="POST">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit">Eliminar</button>
                       </form>
                       <button @click="open=false" class="px-6 py-2 text-gray-700 dark:text-slate-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-600 dark:hover:bg-slate-700 rounded-lg">Cancelar</button>
                     </div>
