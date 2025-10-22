@@ -9,7 +9,6 @@ use App\Http\Controllers\ApplicationsController;
 use App\Http\Controllers\OffersController;
 
 
-// Raíz → login
 Route::get('/', fn () => redirect()->route('login'));
 
 // Rutas de Breeze (login, register, logout, etc.)

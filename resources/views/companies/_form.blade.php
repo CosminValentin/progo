@@ -9,7 +9,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="block text-xs font-medium text-gray-600 dark:text-slate-300 mb-1">CIF/NIF <span class="text-rose-600">*</span></label>
-      <input name="cif_nif" value="{{ old('cif_nif', $company->cif_nif ?? '') }}" maxlength="20" required
+      <input name="cif_nif" value="{{ old('cif_nif', $company->cif_nif ?? '') }}" maxlength="30" required
              class="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500">
       @error('cif_nif')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
     </div>
@@ -29,7 +29,7 @@
   </h3>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="md:col-span-1">
+    <div>
       <label class="block text-xs font-medium text-gray-600 dark:text-slate-300 mb-1">Ámbito</label>
       <input name="ambito" value="{{ old('ambito', $company->ambito ?? '') }}" maxlength="80"
              class="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-emerald-500">

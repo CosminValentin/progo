@@ -19,7 +19,6 @@
       {{ session('success') }}
     </div>
   @endif
-
   @if(session('error'))
     <div class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-800 dark:border-rose-600 dark:bg-rose-900 dark:text-rose-100 shadow">
       {{ session('error') }}
@@ -86,16 +85,20 @@
           <tr class="hover:bg-indigo-50 dark:hover:bg-slate-700/30 transition">
             <td class="px-5 py-4 font-semibold text-indigo-700 dark:text-indigo-300">{{ $c->cif_nif }}</td>
             <td class="px-5 py-4 text-gray-700 dark:text-slate-300">{{ $c->nombre }}</td>
-            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden md:table-cell">{{ $c->contacto_email }}</td>
-            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden lg:table-cell">{{ $c->ambito }}</td>
+            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden md:table-cell">{{ $c->contacto_email ?: '—' }}</td>
+            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden lg:table-cell">{{ $c->ambito ?: '—' }}</td>
             <td class="px-5 py-4">
               <div class="flex justify-end gap-2" x-data="{open:false}">
                 <a href="{{ route('viewcompany', $c) }}"
                    class="px-3 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition">Ver</a>
                 <a href="{{ route('editcompany', $c) }}"
                    class="px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition">Editar</a>
+
+                <!-- Abrir modal -->
                 <button @click="open=true"
-                        class="px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition">Borrar</button>
+                        class="px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition">
+                  Borrar
+                </button>
 
                 <!-- Modal -->
                 <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -117,6 +120,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
             </td>
           </tr>
@@ -130,7 +134,7 @@
   </div>
 
   <!-- Paginación -->
-  <div class="mt-6">
-    {{ $companies->links() }}
-  </div>
+<div class="mt-6">
+  {{ $companies->onEachSide(1)->links() }}
+</div>
 @endsection
