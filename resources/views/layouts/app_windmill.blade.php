@@ -17,8 +17,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ config('app.name', 'PROGO') }}</title>
-
+  <link rel="icon" type="image/png" href="{{ asset('brand/progo-logo.png') }}">
+  <title>@yield('title', config('app.name', 'PROGO'))</title>
   <script>tailwind = { config: { darkMode: 'class' } }</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -43,10 +43,13 @@
   <!-- SIDEBAR -->
   <aside class="fixed inset-y-0 left-0 z-40 w-64 transform bg-white dark:bg-slate-800
                  border-r border-gray-200 dark:border-slate-700 thin-scrollbar
-                 md:translate-x-0 transition-transform duration-200 ease-in-out"
+                 md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg"
          :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
     <div class="h-16 flex items-center px-6 border-b border-gray-200/70 dark:border-slate-700/60">
-      <a href="{{ url('/home') }}" class="text-xl font-bold tracking-tight text-indigo-700 dark:text-indigo-300">PROGO</a>
+      <a href="{{ url('/home') }}" class="inline-flex items-center gap-2">
+        <x-application-logo size="h-16 md:h-24" />
+        <span class="sr-only">PROGO</span>
+      </a>
     </div>
 
     @php
@@ -63,45 +66,41 @@
       ];
     @endphp
 
-    <nav class="px-3 py-4 space-y-1">
+    <nav class="px-3 py-4 space-y-2">
       @foreach ($links as $link)
         <a href="{{ url($link['url']) }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-                  hover:bg-indigo-50 hover:text-indigo-700
-                  dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
+           class="flex items-center gap-3 px-4 py-2 rounded-lg text-base font-semibold transition-colors duration-200 
+                  hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
                   {{ request()->is(ltrim($link['url'], '/').'*')
                     ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-700/70 dark:text-indigo-200'
                     : 'text-gray-700 dark:text-slate-200' }}">
           <i class="fa-solid {{ $link['icon'] }} w-5 text-center"></i>
-          <span>{{ $link['label'] }}</span>
+          <span class="font-medium">{{ $link['label'] }}</span>
         </a>
       @endforeach
 
       @if(auth()->check() && method_exists(auth()->user(),'hasRole') && auth()->user()->hasRole('admin'))
         <div class="pt-3 mt-3 border-t border-gray-200 dark:border-slate-700"></div>
         <a href="{{ url('/admin') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-                  hover:bg-indigo-50 hover:text-indigo-700
-                  dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
+           class="flex items-center gap-3 px-4 py-2 rounded-lg text-base font-semibold transition-colors duration-200 
+                  hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
                   {{ request()->is('admin*')
                     ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-700/70 dark:text-indigo-200'
                     : 'text-gray-700 dark:text-slate-200' }}">
           <i class="fa-solid fa-gear w-5 text-center"></i>
-          <span>Admin</span>
+          <span class="font-medium">Admin</span>
         </a>
       @endif
     </nav>
   </aside>
 
-  <!-- WRAPPER (compensa sidebar) -->
   <div class="md:pl-64 min-h-screen flex flex-col">
 
-    <!-- TOPBAR -->
     <header class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8
                    bg-white/90 dark:bg-slate-800/90 backdrop-blur
-                   border-b border-gray-200 dark:border-slate-700 sticky top-0 z-20">
+                   border-b border-gray-200 dark:border-slate-700 sticky top-0 z-20 shadow-lg">
       <div class="flex items-center gap-2">
-        <button class="md:hidden p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700"
+        <button class="md:hidden p-2 rounded-md bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600"
                 @click="sidebarOpen = !sidebarOpen">
           <i class="fa-solid fa-bars"></i>
         </button>
@@ -112,7 +111,7 @@
 
       <div class="flex items-center gap-2">
         <button @click="toggleDark()"
-                class="p-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700"
+                class="p-2 rounded-md border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-200"
                 :title="dark ? 'Modo claro' : 'Modo oscuro'">
           <i :class="dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'"></i>
         </button>
@@ -120,14 +119,14 @@
         @auth
           <div class="relative" x-data="{open:false}" @keydown.escape="open=false">
             <button @click="open=!open"
-                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gray-200 dark:bg-slate-700 text-sm font-medium hover:bg-gray-300 dark:hover:bg-slate-600">
               <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
               <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
             </button>
             <div x-cloak x-show="open" x-transition @click.outside="open=false"
                  class="absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg z-50">
               <div class="py-2">
-                <a href="{{ url('/home') }}" class="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-slate-700/60">
+                <a href="{{ url('/home') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/60">
                   <i class="fa-solid fa-house me-2"></i> Inicio
                 </a>
                 <div class="my-2 border-t border-gray-200 dark:border-slate-700"></div>
@@ -144,8 +143,7 @@
       </div>
     </header>
 
-    <!-- MAIN (sin offsets raros) -->
-    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <main class="flex-1 p-6 sm:p-8 lg:p-10">
       @hasSection('header')
         <div class="mb-6">@yield('header')</div>
       @endif
