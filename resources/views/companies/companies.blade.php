@@ -4,7 +4,7 @@
   <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
       <h1 class="text-3xl font-bold text-indigo-700 dark:text-indigo-400">Empresas</h1>
-      <p class="text-sm text-gray-600 dark:text-slate-400">Listado y gestión de empresas.</p>
+      <p class="text-sm text-gray-600 dark:text-slate-400">Gestiona altas, ediciones y bajas.</p>
     </div>
     <a href="{{ route('addcompany') }}"
        class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg transition">
@@ -26,12 +26,38 @@
     </div>
   @endif
 
-  <!-- Search Form -->
+  <!-- Estadísticas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Total</div>
+      <div class="mt-1 flex items-baseline gap-2">
+        <div class="text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ number_format($companies->total()) }}</div>
+        <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">live</span>
+      </div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Página</div>
+      <div class="mt-1 text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ $companies->currentPage() }}/{{ $companies->lastPage() }}</div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Mostrando</div>
+      <div class="mt-1 text-2xl font-semibold text-gray-800 dark:text-slate-100">{{ $companies->count() }}</div>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow">
+      <div class="text-sm text-gray-500 dark:text-slate-400">Estado</div>
+      <div class="mt-1 flex items-center gap-2">
+        <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-300 text-sm">
+          <i class="fa-solid fa-circle text-[8px]"></i> Activo
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buscador -->
   <form method="GET" action="{{ route('companies') }}" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="col-span-2">
       <div class="relative">
-        <input type="text" name="q" value="{{ $q ?? '' }}"
-               placeholder="Buscar por CIF/NIF, nombre, actividad o email…"
+        <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Buscar por CIF/NIF, nombre o email…"
                class="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm px-10 py-3 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 shadow-sm transition">
         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
       </div>
@@ -43,15 +69,15 @@
     </div>
   </form>
 
-  <!-- Table -->
+  <!-- Tabla -->
   <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
     <table class="min-w-full">
       <thead class="bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700 dark:text-slate-200">
         <tr>
           <th class="px-5 py-3">CIF/NIF</th>
           <th class="px-5 py-3">Nombre</th>
-          <th class="px-5 py-3 hidden lg:table-cell">Actividad</th>
-          <th class="px-5 py-3 hidden md:table-cell">Contacto</th>
+          <th class="px-5 py-3 hidden md:table-cell">Email contacto</th>
+          <th class="px-5 py-3 hidden lg:table-cell">Ámbito</th>
           <th class="px-5 py-3 text-right">Acciones</th>
         </tr>
       </thead>
@@ -60,13 +86,8 @@
           <tr class="hover:bg-indigo-50 dark:hover:bg-slate-700/30 transition">
             <td class="px-5 py-4 font-semibold text-indigo-700 dark:text-indigo-300">{{ $c->cif_nif }}</td>
             <td class="px-5 py-4 text-gray-700 dark:text-slate-300">{{ $c->nombre }}</td>
-            <td class="px-5 py-4 hidden lg:table-cell text-gray-600 dark:text-slate-400">{{ $c->actividad ?: '—' }}</td>
-            <td class="px-5 py-4 hidden md:table-cell">
-              <div class="flex flex-col">
-                <span class="text-gray-800 dark:text-white">{{ $c->contacto_nombre ?: '—' }}</span>
-                <span class="text-xs text-gray-500 dark:text-slate-400">{{ $c->contacto_email ?: '' }}</span>
-              </div>
-            </td>
+            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden md:table-cell">{{ $c->contacto_email }}</td>
+            <td class="px-5 py-4 text-gray-600 dark:text-slate-400 hidden lg:table-cell">{{ $c->ambito }}</td>
             <td class="px-5 py-4">
               <div class="flex justify-end gap-2" x-data="{open:false}">
                 <a href="{{ route('viewcompany', $c) }}"
@@ -83,37 +104,33 @@
                     <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
                       <h3 class="text-lg font-semibold text-center text-red-600 dark:text-red-400">Confirmar eliminación</h3>
                       <p class="mt-2 text-sm text-center text-gray-600 dark:text-slate-300">
-                        ¿Eliminar <strong>{{ $c->nombre }}</strong> ({{ $c->cif_nif }})?
+                        ¿Eliminar <strong>{{ $c->nombre }}</strong> ({{ $c->cif_nif }})? Esta acción no se puede deshacer.
                       </p>
                     </div>
-                    <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
-                      <button @click="open=false"
-                              class="px-4 py-2.5 w-full sm:w-auto rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 transition">Cancelar</button>
+                    <div class="flex items-center justify-center gap-4 p-6">
                       <form method="POST" action="{{ route('deletecompany', $c) }}">
                         @csrf
-                        <button
-                          class="px-4 py-2.5 w-full sm:w-auto rounded-lg bg-gradient-to-r from-red-600 to-rose-600 text-white hover:from-red-700 hover:to-rose-700 transition shadow-md">Sí, eliminar</button>
+                        @method('DELETE')
+                        <button type="submit" class="px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg">Eliminar</button>
                       </form>
+                      <button @click="open=false" class="px-6 py-2 text-gray-700 dark:text-slate-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-600 dark:hover:bg-slate-700 rounded-lg">Cancelar</button>
                     </div>
                   </div>
                 </div>
-                <!-- /Modal -->
               </div>
             </td>
           </tr>
         @empty
           <tr>
-            <td colspan="5" class="px-5 py-12 text-center text-gray-500 dark:text-slate-400 italic">No hay empresas registradas.</td>
+            <td colspan="5" class="px-5 py-4 text-center text-gray-600 dark:text-slate-400">No se encontraron empresas.</td>
           </tr>
         @endforelse
       </tbody>
     </table>
   </div>
 
-  <!-- Pagination -->
-  <div class="mt-6 text-center">
-    <div class="inline-block rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 shadow-md">
-      {{ $companies->onEachSide(1)->links('pagination::tailwind') }}
-    </div>
+  <!-- Paginación -->
+  <div class="mt-6">
+    {{ $companies->links() }}
   </div>
 @endsection

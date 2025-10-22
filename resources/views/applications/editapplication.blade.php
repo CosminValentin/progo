@@ -3,10 +3,10 @@
 @section('header')
   <div class="flex items-end justify-between">
     <div>
-      <h1 class="text-2xl font-bold">Editar empresa</h1>
-      <p class="text-sm text-gray-500 dark:text-slate-400">Actualiza la información de <strong>{{ $company->nombre }}</strong>.</p>
+      <h1 class="text-2xl font-bold">Editar candidatura</h1>
+      <p class="text-sm text-gray-500 dark:text-slate-400">Actualiza la información.</p>
     </div>
-    <a href="{{ route('companies') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
+    <a href="{{ route('applications') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
   </div>
 @endsection
 
@@ -21,11 +21,11 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('updatecompany', $company) }}"
+    <form method="POST" action="{{ route('updateapplication', $application) }}"
           class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
       @csrf
 
-      @include('companies._form', ['company' => $company])
+      @include('applications._form', ['application' => $application, 'participants' => $participants, 'offers' => $offers, 'estados' => $estados])
 
       <div class="flex items-center justify-between pt-2">
         <button type="button" @click="open=true"
@@ -41,15 +41,16 @@
       <div class="absolute inset-0 bg-black/40" @click="open=false"></div>
       <div x-transition class="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
         <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
-          <h3 class="text-lg font-semibold text-center">Eliminar empresa</h3>
+          <h3 class="text-lg font-semibold text-center">Eliminar candidatura</h3>
           <p class="mt-1 text-sm text-center text-gray-500 dark:text-slate-300">
-            ¿Eliminar <strong>{{ $company->nombre }}</strong> ({{ $company->cif_nif }})?
+            ¿Eliminar la candidatura seleccionada?
           </p>
         </div>
         <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
           <button @click="open=false" class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/60">Cancelar</button>
-          <form method="POST" action="{{ route('deletecompany', $company) }}">
+          <form method="POST" action="{{ route('deleteapplication', $application) }}">
             @csrf
+            @method('DELETE')
             <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">Sí, eliminar</button>
           </form>
         </div>
