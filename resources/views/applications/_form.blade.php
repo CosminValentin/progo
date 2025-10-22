@@ -24,10 +24,10 @@
       <label class="block text-xs font-medium text-gray-600 dark:text-slate-300 mb-1">Oferta <span class="text-rose-600">*</span></label>
       <select name="offer_id" required
               class="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500">
-        <option value="">— Selecciona —</option>
+        <option value="">— Selecciona la oferta —</option>
         @foreach($offers as $o)
           @php
-            $label = $o->titulo ?? $o->nombre ?? ('Oferta #'.$o->id);
+            $label = 'Oferta - ' . $o->titulo . ($o->puesto ?? 'Sin puesto');
           @endphp
           <option value="{{ $o->id }}" {{ (string)old('offer_id', $application->offer_id ?? '') === (string)$o->id ? 'selected' : '' }}>
             {{ $label }}
@@ -41,9 +41,10 @@
       <label class="block text-xs font-medium text-gray-600 dark:text-slate-300 mb-1">Estado <span class="text-rose-600">*</span></label>
       <select name="estado" required
               class="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500">
-        @foreach($estados as $e)
-          <option value="{{ $e }}" {{ old('estado', $application->estado ?? '') === $e ? 'selected' : '' }}>
-            {{ ucfirst(str_replace('_',' ',$e)) }}
+        <option value="">— Selecciona —</option>
+        @foreach($estados as $estado)
+          <option value="{{ $estado }}" {{ old('estado', $application->estado ?? '') === $estado ? 'selected' : '' }}>
+            {{ ucfirst(str_replace('_', ' ', $estado)) }}
           </option>
         @endforeach
       </select>

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/updatecompany/{company}', [CompaniesController::class, 'updateCompany'])->name('updatecompany');
     Route::post('/deletecompany/{company}', [CompaniesController::class, 'deleteCompany'])->name('deletecompany');
 
+    // Rutas de Ofertas
     Route::get('/offers',                 [OffersController::class, 'index'])->name('offers');
     Route::get('/offers/new',             [OffersController::class, 'create'])->name('addoffer');
     Route::post('/offers',                [OffersController::class, 'store'])->name('saveoffer');
@@ -51,7 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers/{offer}',        [OffersController::class, 'update'])->name('updateoffer');
     Route::delete('/offers/{offer}',      [OffersController::class, 'destroy'])->name('deleteoffer');
 
-    // APPLICATIONS (por si acaso)
+    // Rutas de Applications
     Route::get('/applications',                      [ApplicationsController::class, 'index'])->name('applications');
     Route::get('/applications/new',                  [ApplicationsController::class, 'create'])->name('addapplication');
     Route::post('/applications',                     [ApplicationsController::class, 'store'])->name('saveapplication');
