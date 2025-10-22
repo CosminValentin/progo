@@ -24,10 +24,9 @@ class ApplicationsController extends Controller
                           ->orWhere('email', 'like', "%{$q}%");
                     })
                     ->orWhereHas('offer', function ($o) use ($q) {
-                        // intentamos varios nombres habituales
-                        $o->where('titulo', 'like', "%{$q}%")
-                          ->orWhere('nombre', 'like', "%{$q}%")
-                          ->orWhere('referencia', 'like', "%{$q}%");
+                        $o->where('puesto', 'like', "%{$q}%")
+                          ->orWhere('ubicacion', 'like', "%{$q}%")
+                          ->orWhere('estado', 'like', "%{$q}%");
                     })
                     ->orWhere('estado', 'like', "%{$q}%");
                 });
@@ -46,8 +45,8 @@ class ApplicationsController extends Controller
     public function create()
     {
         $participants = Participant::orderBy('nombre')->get(['id', 'nombre', 'dni_nie']);
-        $offers = Offer::orderBy('id', 'desc')->get(['id', 'titulo', 'nombre']); // cogemos ambos posibles
-        $estados = ['pendiente','en_proceso','aceptada','rechazada'];
+        $offers       = Offer::orderByDesc('fecha')->orderByDesc('id')->get(['id', 'puesto']);
+        $estados      = ['pendiente','en_proceso','aceptada','rechazada'];
 
         return view('applications.addapplication', compact('participants', 'offers', 'estados'));
     }
@@ -61,7 +60,7 @@ class ApplicationsController extends Controller
             'fecha'          => ['required','date'],
         ]);
 
-        $app = Application::create($validated);
+        Application::create($validated);
 
         return redirect()->route('applications')->with('success', 'Candidatura creada correctamente.');
     }
@@ -75,10 +74,9 @@ class ApplicationsController extends Controller
     public function edit(Application $application)
     {
         $application->load(['participant','offer']);
-
         $participants = Participant::orderBy('nombre')->get(['id', 'nombre', 'dni_nie']);
-        $offers = Offer::orderBy('id', 'desc')->get(['id','titulo','nombre']);
-        $estados = ['pendiente','en_proceso','aceptada','rechazada'];
+        $offers       = Offer::orderByDesc('fecha')->orderByDesc('id')->get(['id','puesto']);
+        $estados      = ['pendiente','en_proceso','aceptada','rechazada'];
 
         return view('applications.editapplication', compact('application','participants','offers','estados'));
     }

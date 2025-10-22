@@ -6,6 +6,7 @@ use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ApplicationsController;
+use App\Http\Controllers\OffersController;
 
 
 // Raíz → login
@@ -42,12 +43,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/updatecompany/{company}', [CompaniesController::class, 'updateCompany'])->name('updatecompany');
     Route::post('/deletecompany/{company}', [CompaniesController::class, 'deleteCompany'])->name('deletecompany');
 
+    Route::get('/offers',                 [OffersController::class, 'index'])->name('offers');
+    Route::get('/offers/new',             [OffersController::class, 'create'])->name('addoffer');
+    Route::post('/offers',                [OffersController::class, 'store'])->name('saveoffer');
+    Route::get('/offers/{offer}',         [OffersController::class, 'show'])->name('viewoffer');
+    Route::get('/offers/{offer}/edit',    [OffersController::class, 'edit'])->name('editoffer');
+    Route::post('/offers/{offer}',        [OffersController::class, 'update'])->name('updateoffer');
+    Route::delete('/offers/{offer}',      [OffersController::class, 'destroy'])->name('deleteoffer');
 
-    Route::get('/applications',                 [ApplicationsController::class, 'index'])->name('applications');
-    Route::get('/applications/new',             [ApplicationsController::class, 'create'])->name('addapplication');
-    Route::post('/applications',                [ApplicationsController::class, 'store'])->name('saveapplication');
-    Route::get('/applications/{application}',   [ApplicationsController::class, 'show'])->name('viewapplication');
-    Route::get('/applications/{application}/edit', [ApplicationsController::class, 'edit'])->name('editapplication');
-    Route::post('/applications/{application}',  [ApplicationsController::class, 'update'])->name('updateapplication');
-    Route::delete('/applications/{application}',[ApplicationsController::class, 'destroy'])->name('deleteapplication');
+    // APPLICATIONS (por si acaso)
+    Route::get('/applications',                      [ApplicationsController::class, 'index'])->name('applications');
+    Route::get('/applications/new',                  [ApplicationsController::class, 'create'])->name('addapplication');
+    Route::post('/applications',                     [ApplicationsController::class, 'store'])->name('saveapplication');
+    Route::get('/applications/{application}',        [ApplicationsController::class, 'show'])->name('viewapplication');
+    Route::get('/applications/{application}/edit',   [ApplicationsController::class, 'edit'])->name('editapplication');
+    Route::post('/applications/{application}',       [ApplicationsController::class, 'update'])->name('updateapplication');
+    Route::delete('/applications/{application}',     [ApplicationsController::class, 'destroy'])->name('deleteapplication');
 });

@@ -11,17 +11,48 @@ class Offer extends Model
 
     protected $table = 'offers';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'company_id',
+        'puesto',
+        'tipo_contrato',
+        'jornada_pct',
+        'ubicacion',
+        'requisitos',
+        'estado',
+        'fecha',
+    ];
 
-    // Relaciones
+    // Desactivar los timestamps automáticos
+    public $timestamps = false;
+
+    protected $casts = [
+        'fecha' => 'date',
+        'jornada_pct' => 'integer',
+    ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function applications()
     {
         return $this->hasMany(Application::class);
     }
 
-    // Título para mostrar en selects / vistas
+    public function getEstadoBadgeClassesAttribute()
+    {
+        return match ($this->estado) {
+            'abierta' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200',
+            'en_proceso' => 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-200',
+            'cerrada' => 'bg-gray-200 text-gray-700 dark:bg-slate-700/40 dark:text-slate-200',
+            'pausada' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200',
+            default => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-200',
+        };
+    }
+
     public function getDisplayTitleAttribute()
     {
-        return $this->titulo ?? $this->nombre ?? ('Oferta #'.$this->id);
+        return $this->puesto ?: ('Oferta #'.$this->id);
     }
 }
