@@ -48,11 +48,11 @@
         </div>
         <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
           <button @click="open=false" class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/60">Cancelar</button>
-<form action="{{ route('deletecompany', $company->id) }}" method="POST">
-    @csrf
-    @method('DELETE')
-    <button type="submit">Eliminar</button>
-</form>
+          <form method="POST" action="{{ route('deletecompany', $company) }}">
+            @csrf
+            @method('DELETE')
+            <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">Sí, eliminar</button>
+          </form>
         </div>
       </div>
     </div>

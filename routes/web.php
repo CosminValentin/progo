@@ -32,11 +32,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/deleteparticipant/{participant}', [ParticipantsController::class, 'deleteParticipant'])->name('deleteparticipant');
 
     // Rutas de Empresas
-    Route::get('/companies', [CompaniesController::class, 'companies'])->name('companies');
-    Route::get('/addcompany', [CompaniesController::class, 'addCompany'])->name('addcompany');
-    Route::post('/savecompany', [CompaniesController::class, 'saveCompany'])->name('savecompany');
-    Route::get('/viewcompany/{company}', [CompaniesController::class, 'viewCompany'])->name('viewcompany');
-    Route::get('/editcompany/{company}', [CompaniesController::class, 'editCompany'])->name('editcompany');
-    Route::post('/updatecompany/{company}', [CompaniesController::class, 'updateCompany'])->name('updatecompany');
-    Route::post('/deletecompany/{company}', [CompaniesController::class, 'deleteCompany'])->name('deletecompany');
+    Route::get('/companies',                    [CompaniesController::class, 'index'])->name('companies');
+    Route::get('/companies/new',                [CompaniesController::class, 'create'])->name('addcompany');
+    Route::post('/companies',                   [CompaniesController::class, 'store'])->name('savecompany');
+    Route::get('/companies/{company}',          [CompaniesController::class, 'show'])->name('viewcompany');
+    Route::get('/companies/{company}/edit',     [CompaniesController::class, 'edit'])->name('editcompany');
+    Route::post('/companies/{company}',         [CompaniesController::class, 'update'])->name('updatecompany');
+    Route::delete('/companies/{company}',       [CompaniesController::class, 'destroy'])->name('deletecompany');
 });

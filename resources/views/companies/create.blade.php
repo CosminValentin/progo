@@ -23,6 +23,7 @@
   <form method="POST" action="{{ route('savecompany') }}"
         class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
     @csrf
+
     @include('companies._form')
 
     <div class="flex items-center justify-end gap-2 pt-2">
