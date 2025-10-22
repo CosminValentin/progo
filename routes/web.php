@@ -25,13 +25,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/metrics', [HomeController::class, 'metrics'])->name('metrics'); // NUEVA
 
     // Rutas de Participantes
-    Route::get('/participants', [ParticipantsController::class, 'participants'])->name('participants');
-    Route::get('/addparticipant', [ParticipantsController::class, 'addParticipant'])->name('addparticipant');
-    Route::post('/saveparticipant', [ParticipantsController::class, 'saveParticipant'])->name('saveparticipant');
-    Route::get('/viewparticipant/{participant}', [ParticipantsController::class, 'viewParticipant'])->name('viewparticipant');
-    Route::get('/editparticipant/{participant}', [ParticipantsController::class, 'editParticipant'])->name('editparticipant');
-    Route::post('/updateparticipant/{participant}', [ParticipantsController::class, 'updateParticipant'])->name('updateparticipant');
-    Route::post('/deleteparticipant/{participant}', [ParticipantsController::class, 'deleteParticipant'])->name('deleteparticipant');
+    Route::get('/participants', [ParticipantsController::class,'participants'])->name('participants');
+
+    // CREAR
+    Route::get('/addparticipant', [ParticipantsController::class,'addParticipant'])->name('addparticipant');
+    Route::post('/saveparticipant', [ParticipantsController::class,'saveParticipant'])->name('saveparticipant');
+
+    // VER FICHA
+    Route::get('/viewparticipant/{participant}', [ParticipantsController::class,'viewParticipant'])->name('viewparticipant');
+
+    // EDITAR
+    Route::get('/editparticipant/{participant}', [ParticipantsController::class,'editParticipant'])->name('editparticipant');
+    Route::post('/updateparticipant/{participant}', [ParticipantsController::class,'updateParticipant'])->name('updateparticipant');
+
+    // BORRAR
+    Route::post('/deleteparticipant/{participant}', [ParticipantsController::class,'deleteParticipant'])->name('deleteparticipant');
 
     // Rutas de Empresas
     Route::get('/companies',                    [CompaniesController::class, 'index'])->name('companies');
