@@ -10,38 +10,55 @@ class ParticipantsController extends Controller
 {
     public function __construct()
     {
-        // Protege todas las rutas de este controlador
         $this->middleware('auth');
     }
 
     /**
      * LISTADO con búsqueda y paginación
      */
-    public function participants(Request $request)
-    {
-        $q = trim((string) $request->get('q'));
+public function participants(Request $request)
+{
+    $q = trim((string) $request->get('q'));
 
-        $participants = Participant::when($q, function ($query) use ($q) {
-                $query->where(function ($sub) use ($q) {
-                    $sub->where('dni_nie', 'like', "%{$q}%")
-                        ->orWhere('nombre', 'like', "%{$q}%")
-                        ->orWhere('email', 'like', "%{$q}%")
-                        ->orWhere('telefono', 'like', "%{$q}%")
-                        ->orWhere('provincia', 'like', "%{$q}%");
-                });
-            })
-            ->orderByDesc('id')
-            ->paginate(5)
-            ->withQueryString();
+    // Consulta base con relaciones
+    $participants = Participant::with(['tutor', 'cv', 'notaTrabajador'])
+        ->when($q, function ($query) use ($q) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('dni_nie', 'like', "%{$q}%")
+                    ->orWhere('nombre', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('telefono', 'like', "%{$q}%")
+                    ->orWhere('provincia', 'like', "%{$q}%")
+                    ->orWhere('estado', 'like', "%{$q}%");
+            });
+        })
+        ->orderByDesc('id')
+        ->paginate(10)
+        ->withQueryString();
 
-        return view('participants.participants', compact('participants', 'q'));
-    }
+    // 🔹 Cálculos para los cards
+    $totalParticipants    = Participant::count();
+    $activeParticipants   = Participant::where('estado', 'activo')->count();
+    $pendingParticipants  = Participant::where('estado', 'pendiente')->count();
+    $inactiveParticipants = Participant::where('estado', 'inactivo')->count();
+
+    // 🔹 Enviamos todo al Blade
+    return view('participants.participants', compact(
+        'participants',
+        'q',
+        'totalParticipants',
+        'activeParticipants',
+        'pendingParticipants',
+        'inactiveParticipants'
+    ));
+}
 
     /**
      * VER ficha
      */
     public function viewParticipant(Participant $participant)
     {
+        $participant->load(['tutor', 'cv', 'notaTrabajador']);
         return view('participants.viewparticipant', compact('participant'));
     }
 
@@ -67,12 +84,12 @@ class ParticipantsController extends Controller
             'provincia'        => ['nullable', 'max:40'],
             'estado'           => ['nullable', 'max:20'],
             'notas'            => ['nullable', 'string'],
-            // 'tutor_id'      => ['nullable','integer','exists:staff_users,id'], // activa si tienes la tabla
-            // 'consent_rgpd'  => checkbox → se normaliza abajo
+            'tutor_id'         => ['nullable', 'integer'],
+            'id_cv'            => ['nullable', 'integer'],
+            'id_notas_trabajador' => ['required', 'integer'],
         ]);
 
-        // Normaliza checkbox y valores por defecto
-        $validated['consent_rgpd'] = $request->boolean('consent_rgpd'); // true/false
+        $validated['consent_rgpd'] = $request->boolean('consent_rgpd');
         if (empty($validated['estado'])) {
             $validated['estado'] = 'activo';
         }
@@ -107,7 +124,9 @@ class ParticipantsController extends Controller
             'provincia'        => ['nullable', 'max:40'],
             'estado'           => ['nullable', 'max:20'],
             'notas'            => ['nullable', 'string'],
-            // 'tutor_id'      => ['nullable','integer','exists:staff_users,id'],
+            'tutor_id'         => ['nullable', 'integer'],
+            'id_cv'            => ['nullable', 'integer'],
+            'id_notas_trabajador' => ['required', 'integer'],
         ]);
 
         $validated['consent_rgpd'] = $request->boolean('consent_rgpd');
@@ -119,6 +138,7 @@ class ParticipantsController extends Controller
 
         return redirect()->route('participants')->with('success', 'Participante actualizado correctamente.');
     }
+    
 
     /**
      * ELIMINAR
@@ -129,10 +149,13 @@ class ParticipantsController extends Controller
             $participant->delete();
             return redirect()->route('participants')->with('success', 'Participante eliminado.');
         } catch (\Throwable $e) {
-            // Si en el futuro hay claves foráneas, capturamos el error y avisamos
             return redirect()->route('participants')
                 ->with('success', null)
                 ->withErrors('No se pudo eliminar el participante. Puede estar relacionado con otros registros.');
         }
     }
+
+    
 }
+
+

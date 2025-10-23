@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 
 class ApplicationsController extends Controller
 {
+    
     public function index(Request $request)
     {
         $q = trim((string) $request->get('q'));

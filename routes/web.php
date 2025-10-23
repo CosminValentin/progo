@@ -10,7 +10,10 @@ use App\Http\Controllers\OffersController;
 
 
 Route::get('/', fn () => redirect()->route('login'));
-
+Route::get('/applications/search', [ApplicationsController::class, 'liveSearch'])
+    ->name('applications.search')
+    ->middleware(['web','auth']);
+    
 // Rutas de Breeze (login, register, logout, etc.)
 require __DIR__ . '/auth.php';
 
