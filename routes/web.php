@@ -117,3 +117,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('contracts', \App\Http\Controllers\ContractsController::class);
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/participants/{participant}/timeline', [\App\Http\Controllers\ParticipantsController::class, 'timeline'])
+        ->name('participants.timeline');
+});
