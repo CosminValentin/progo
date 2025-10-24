@@ -63,7 +63,7 @@
         ['url'=>'/offers','label'=>'Ofertas','icon'=>'fa-briefcase'],
         ['url'=>'/applications','label'=>'Candidaturas','icon'=>'fa-user-check'],
         ['url'=>'/contracts','label'=>'Contratos','icon'=>'fa-file-signature'],
-        ['url'=>'/ss_records','label'=>'Registros SS','icon'=>'fa-shield-halved'],
+        ['url'=>'/ss-records','label'=>'Registros SS','icon'=>'fa-shield-halved'],
         ['url'=>'/insertion_checks','label'=>'Validación Inserciones','icon'=>'fa-circle-check'],
         ['url'=>'/documents','label'=>'Documentos','icon'=>'fa-folder-open'],
         ['url'=>'/notas','label'=>'Notas de Trabajador','icon'=>'fa-note-sticky'],

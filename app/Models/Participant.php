@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -21,15 +22,15 @@ class Participant extends Model
         'consent_rgpd',
         'notas',
         'id_cv',
-        'id_notas_trabajador',
+        // ❌ quitado: 'id_notas_trabajador',
     ];
 
     protected $casts = [
         'fecha_alta_prog' => 'date',
-        'consent_rgpd' => 'boolean',
+        'consent_rgpd'    => 'boolean',
     ];
 
-    // Relaciones opcionales
+    // --- Relaciones ---
     public function tutor()
     {
         return $this->belongsTo(User::class, 'tutor_id');
@@ -40,8 +41,25 @@ class Participant extends Model
         return $this->belongsTo(CV::class, 'id_cv');
     }
 
+    // Todas las notas del participante (notas_trabajador.id_participante -> participants.id)
+    public function notasTrabajador()
+    {
+        return $this->hasMany(\App\Models\NotaTrabajador::class, 'id_participante', 'id');
+    }
+
+    // Compatibilidad con vistas: "última" nota como antes (método se sigue llamando igual)
     public function notaTrabajador()
     {
-        return $this->belongsTo(NotaTrabajador::class, 'id_notas_trabajador', 'id_nota');
+        // Si tu versión de Laravel soporta latestOfMany:
+        return $this->hasOne(\App\Models\NotaTrabajador::class, 'id_participante', 'id')
+                    ->latestOfMany('fecha_hora');
+
+        // Si no, usa esto:
+        // return $this->hasOne(\App\Models\NotaTrabajador::class, 'id_participante', 'id')->latest('fecha_hora');
+    }
+
+    public function ssRecords()
+    {
+        return $this->hasMany(\App\Models\SSRecord::class, 'participant_id', 'id');
     }
 }

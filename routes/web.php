@@ -69,4 +69,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/notas/{nota}/edit', [NotaTrabajadorController::class, 'edit'])->name('notas.edit');
     Route::put('/notas/{nota}', [NotaTrabajadorController::class, 'update'])->name('notas.update');
     Route::delete('/notas/{nota}', [NotaTrabajadorController::class, 'destroy'])->name('notas.destroy');
+
+    Route::get('/ss-records',            [\App\Http\Controllers\SSRecordsController::class, 'index'])->name('ss.index');
+    Route::get('/ss-records/create',     [\App\Http\Controllers\SSRecordsController::class, 'create'])->name('ss.create');
+    Route::post('/ss-records',           [\App\Http\Controllers\SSRecordsController::class, 'store'])->name('ss.store');
+    Route::get('/ss-records/{ss}',       [\App\Http\Controllers\SSRecordsController::class, 'show'])->name('ss.show');
+    Route::get('/ss-records/{ss}/edit',  [\App\Http\Controllers\SSRecordsController::class, 'edit'])->name('ss.edit');
+    Route::put('/ss-records/{ss}',       [\App\Http\Controllers\SSRecordsController::class, 'update'])->name('ss.update');
+    Route::delete('/ss-records/{ss}',    [\App\Http\Controllers\SSRecordsController::class, 'destroy'])->name('ss.destroy');
 });
