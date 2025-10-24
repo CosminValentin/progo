@@ -17,6 +17,8 @@ Route::get('/applications/search', [ApplicationsController::class, 'liveSearch']
     ->name('applications.search')
     ->middleware(['web', 'auth']);
 
+    
+
 require __DIR__ . '/auth.php';
 
 Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -102,5 +104,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/agreements/{agreement}',    [\App\Http\Controllers\AgreementsController::class, 'update'])->name('agreements.update');
     Route::delete('/agreements/{agreement}', [\App\Http\Controllers\AgreementsController::class, 'destroy'])->name('agreements.destroy');
 
+    Route::get('/contracts',                   [\App\Http\Controllers\ContractsController::class, 'index'])->name('contracts.index');
+    Route::get('/contracts/create',            [\App\Http\Controllers\ContractsController::class, 'create'])->name('contracts.create');
+    Route::post('/contracts',                  [\App\Http\Controllers\ContractsController::class, 'store'])->name('contracts.store');
+    Route::get('/contracts/{contract}',        [\App\Http\Controllers\ContractsController::class, 'show'])->name('contracts.show');
+    Route::get('/contracts/{contract}/edit',   [\App\Http\Controllers\ContractsController::class, 'edit'])->name('contracts.edit');
+    Route::put('/contracts/{contract}',        [\App\Http\Controllers\ContractsController::class, 'update'])->name('contracts.update');
+    Route::delete('/contracts/{contract}',     [\App\Http\Controllers\ContractsController::class, 'destroy'])->name('contracts.destroy');
 
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('contracts', \App\Http\Controllers\ContractsController::class);
 });
