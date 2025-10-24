@@ -102,7 +102,6 @@
     @error('estado') <p class="text-rose-600 text-sm mt-1">{{ $message }}</p> @enderror
   </div>
 
-  <!-- Acciones (sticky) -->
   <div class="sticky bottom-4 z-10">
     <div class="rounded-2xl border border-gray-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-300">
