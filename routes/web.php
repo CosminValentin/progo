@@ -86,5 +86,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/{document}/download', [DocumentsController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{document}',       [DocumentsController::class, 'destroy'])->name('documents.destroy');
 
+    Route::get('/insertion_checks',            [\App\Http\Controllers\InsertionChecksController::class, 'index'])->name('insertion_checks.index');
+    Route::get('/insertion_checks/create',     [\App\Http\Controllers\InsertionChecksController::class, 'create'])->name('insertion_checks.create');
+    Route::post('/insertion_checks',           [\App\Http\Controllers\InsertionChecksController::class, 'store'])->name('insertion_checks.store');
+    Route::get('/insertion_checks/{insertion_check}',        [\App\Http\Controllers\InsertionChecksController::class, 'show'])->name('insertion_checks.show');
+    Route::get('/insertion_checks/{insertion_check}/edit',   [\App\Http\Controllers\InsertionChecksController::class, 'edit'])->name('insertion_checks.edit');
+    Route::put('/insertion_checks/{insertion_check}',        [\App\Http\Controllers\InsertionChecksController::class, 'update'])->name('insertion_checks.update');
+    Route::delete('/insertion_checks/{insertion_check}',     [\App\Http\Controllers\InsertionChecksController::class, 'destroy'])->name('insertion_checks.destroy');    
+
 
 });
