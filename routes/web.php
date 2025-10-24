@@ -94,5 +94,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/insertion_checks/{insertion_check}',        [\App\Http\Controllers\InsertionChecksController::class, 'update'])->name('insertion_checks.update');
     Route::delete('/insertion_checks/{insertion_check}',     [\App\Http\Controllers\InsertionChecksController::class, 'destroy'])->name('insertion_checks.destroy');    
 
+    Route::get('/agreements',                [\App\Http\Controllers\AgreementsController::class, 'index'])->name('agreements.index');
+    Route::get('/agreements/create',         [\App\Http\Controllers\AgreementsController::class, 'create'])->name('agreements.create');
+    Route::post('/agreements',               [\App\Http\Controllers\AgreementsController::class, 'store'])->name('agreements.store');
+    Route::get('/agreements/{agreement}',    [\App\Http\Controllers\AgreementsController::class, 'show'])->name('agreements.show');
+    Route::get('/agreements/{agreement}/edit', [\App\Http\Controllers\AgreementsController::class, 'edit'])->name('agreements.edit');
+    Route::put('/agreements/{agreement}',    [\App\Http\Controllers\AgreementsController::class, 'update'])->name('agreements.update');
+    Route::delete('/agreements/{agreement}', [\App\Http\Controllers\AgreementsController::class, 'destroy'])->name('agreements.destroy');
+
 
 });
