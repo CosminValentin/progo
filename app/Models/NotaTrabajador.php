@@ -2,32 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class NotaTrabajador extends Model
 {
     use HasFactory;
 
-    // Nombre real de la tabla
     protected $table = 'notas_trabajador';
-
-    // Clave primaria
     protected $primaryKey = 'id_nota';
-
-    // Si no tienes timestamps (created_at, updated_at) en la tabla:
+    public $incrementing = true;
+    protected $keyType = 'int';
     public $timestamps = false;
 
-    // Campos editables
-    protected $fillable = [
-        'descripcion',
-        'observaciones',
-        'fecha',
+    // ✅ Desbloquea asignación masiva para evitar sorpresas
+    protected $guarded = [];
+
+    protected $casts = [
+        'fecha_hora' => 'datetime',
     ];
 
-    // Relación inversa con participantes
-    public function participants()
+    public function usuario()
     {
-        return $this->hasMany(Participant::class, 'id_notas_trabajador', 'id_nota');
+        return $this->belongsTo(\App\Models\User::class, 'id_usuario_trabajador');
+    }
+
+    public function participant()
+    {
+        // ✅ Asegúrate de que la FK coincida con la columna de tu tabla
+        return $this->belongsTo(\App\Models\Participant::class, 'id_participante');
     }
 }

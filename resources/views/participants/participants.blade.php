@@ -133,7 +133,7 @@
           <th class="px-3 py-3 hidden xl:table-cell w-32">CV</th>
           <th class="px-3 py-3 hidden xl:table-cell w-32">Notas</th>
           <th class="px-3 py-3 hidden xl:table-cell w-20">RGPD</th>
-          <th class="px-3 py-3 w-32 text-center">Acciones</th>
+          <th class="px-3 py-3 w-32 text-right">Acciones</th>
         </tr>
       </thead>
 
