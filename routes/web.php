@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ApplicationsController;
 use App\Http\Controllers\OffersController;
 use App\Http\Controllers\NotaTrabajadorController;
+use App\Http\Controllers\DocumentsController;
+
 
 Route::get('/', fn () => redirect()->route('login'));
 
@@ -77,4 +79,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ss-records/{ss}/edit',  [\App\Http\Controllers\SSRecordsController::class, 'edit'])->name('ss.edit');
     Route::put('/ss-records/{ss}',       [\App\Http\Controllers\SSRecordsController::class, 'update'])->name('ss.update');
     Route::delete('/ss-records/{ss}',    [\App\Http\Controllers\SSRecordsController::class, 'destroy'])->name('ss.destroy');
+
+    Route::get('/documents',        [DocumentsController::class, 'index'])->name('documents.index');
+    Route::get('/documents/new',    [DocumentsController::class, 'create'])->name('documents.create');
+    Route::post('/documents',       [DocumentsController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{document}/download', [DocumentsController::class, 'download'])->name('documents.download');
+    Route::delete('/documents/{document}',       [DocumentsController::class, 'destroy'])->name('documents.destroy');
+
+
 });
