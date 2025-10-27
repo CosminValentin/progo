@@ -66,6 +66,7 @@
         ['url'=>'/ss-records','label'=>'Registros SS','icon'=>'fa-shield-halved'],
         ['url'=>'/insertion_checks','label'=>'Validación Inserciones','icon'=>'fa-circle-check'],
         ['url'=>'/documents','label'=>'Documentos','icon'=>'fa-folder-open'],
+        ['url'=>'/cvs','label'=>'CVs','icon'=>'fa-file-lines'], 
         ['url'=>'/notas','label'=>'Notas de Trabajador','icon'=>'fa-note-sticky'],
 
       ];

@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Document extends Model
 {
     protected $table = 'documents';
-    public $timestamps = false;
+    public $timestamps = false; // la tabla usa 'fecha' en vez de created_at/updated_at
 
     protected $fillable = [
-        'owner_type',
+        'owner_type',     // 'participants' | 'companies' | 'offers' | 'users'
         'owner_id',
-        'tipo',
+        'tipo',           // 'cv' | 'contrata' | etc
         'nombre_archivo',
         'hash',
         'uploader_id',
@@ -25,21 +25,20 @@ class Document extends Model
         'protegido' => 'boolean',
     ];
 
-    // Polimórfica: owner_type (clave corta) + owner_id
+    // Polimórfica con morphMap (AppServiceProvider->Relation::enforceMorphMap([...]))
     public function owner()
     {
-        return $this->morphTo(__FUNCTION__, 'owner_type', 'owner_id');
+        return $this->morphTo(null, 'owner_type', 'owner_id');
     }
 
-    // Usuario que sube
     public function uploader()
     {
-        return $this->belongsTo(\App\Models\User::class, 'uploader_id');
+        return $this->belongsTo(User::class, 'uploader_id');
     }
 
-    // Ruta interna de almacenamiento
-    public function storagePath(): string
+    /* Scopes útiles */
+    public function scopeCv($q)
     {
-        return 'documents/'.$this->hash;
+        return $q->where('tipo','cv')->where('owner_type','participants');
     }
 }

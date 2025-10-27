@@ -3,26 +3,20 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
     public function boot(): void
     {
-        // Opcional, pero frecuente en MySQL antiguos / índices
         Schema::defaultStringLength(191);
-
-        // Tailwind para la paginación
         Paginator::useTailwind();
 
-        // Claves cortas para relaciones polimórficas (documents.owner_type)
+        // Morph map con claves cortas (como ya usabas en Documents)
         Relation::enforceMorphMap([
             'participants' => \App\Models\Participant::class,
             'companies'    => \App\Models\Company::class,

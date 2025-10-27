@@ -9,6 +9,8 @@ use App\Http\Controllers\ApplicationsController;
 use App\Http\Controllers\OffersController;
 use App\Http\Controllers\NotaTrabajadorController;
 use App\Http\Controllers\DocumentsController;
+use App\Http\Controllers\CvController;
+
 
 
 Route::get('/', fn () => redirect()->route('login'));
@@ -17,7 +19,9 @@ Route::get('/applications/search', [ApplicationsController::class, 'liveSearch']
     ->name('applications.search')
     ->middleware(['web', 'auth']);
 
-    
+Route::get('/participants/{participant}/timeline', [ParticipantsController::class, 'timeline'])
+    ->name('participants.timeline')
+    ->middleware('auth');
 
 require __DIR__ . '/auth.php';
 
@@ -111,6 +115,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/contracts/{contract}/edit',   [\App\Http\Controllers\ContractsController::class, 'edit'])->name('contracts.edit');
     Route::put('/contracts/{contract}',        [\App\Http\Controllers\ContractsController::class, 'update'])->name('contracts.update');
     Route::delete('/contracts/{contract}',     [\App\Http\Controllers\ContractsController::class, 'destroy'])->name('contracts.destroy');
+    Route::get('/participants/{participant}/timeline', [ParticipantsController::class, 'timeline'])->name('participants.timeline');
+    Route::get('/offers/{offer}', [\App\Http\Controllers\OffersController::class, 'show'])->name('offers.show');
+
+    Route::get('/cvs',               [\App\Http\Controllers\CvController::class, 'index'])->name('cvs.index');
+    Route::get('/cvs/create',        [\App\Http\Controllers\CvController::class, 'create'])->name('cvs.create');
+    Route::post('/cvs',              [\App\Http\Controllers\CvController::class, 'store'])->name('cvs.store');
+    Route::get('/cvs/{cv}/edit',     [\App\Http\Controllers\CvController::class, 'edit'])->name('cvs.edit');
+    Route::put('/cvs/{cv}',          [\App\Http\Controllers\CvController::class, 'update'])->name('cvs.update');
+    Route::delete('/cvs/{cv}',       [\App\Http\Controllers\CvController::class, 'destroy'])->name('cvs.destroy');
+    Route::get('/cvs/{cv}/download', [\App\Http\Controllers\CvController::class, 'download'])->name('cvs.download');
 
 });
 
