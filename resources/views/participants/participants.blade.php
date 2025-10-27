@@ -125,29 +125,61 @@
           <td class="px-3 py-3 hidden lg:table-cell text-gray-600 dark:text-slate-400">{{ ucfirst($p->estado) }}</td>
           <td class="px-3 py-3 hidden xl:table-cell text-gray-600 dark:text-slate-400 truncate">{{ $p->tutor?->name ?? '—' }}</td>
           <td class="px-3 py-3 text-right whitespace-nowrap">
-            <div class="flex justify-end gap-1 sm:gap-2">
+            <div class="flex justify-end gap-1 sm:gap-2" x-data="{ open:false }">
               <a href="{{ route('participants.timeline', $p) }}"
-                 class="px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50 transition text-sm"
-                 title="Ver timeline">
+                class="px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50 transition text-sm"
+                title="Ver timeline">
                 <i class="fa-solid fa-timeline mr-1"></i> Timeline
               </a>
 
               <a href="{{ route('viewparticipant', $p) }}"
-                 class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition text-sm">
+                class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition text-sm">
                 Ver
               </a>
 
               <a href="{{ route('editparticipant', $p) }}"
-                 class="px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition text-sm">
+                class="px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition text-sm">
                 Editar
               </a>
 
-              <button @click="open=true"
+              <button @click="open = true"
                       class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition text-sm">
                 Borrar
               </button>
+
+              <!-- Modal borrar -->
+              <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="open=false"></div>
+
+                <div x-transition
+                    class="relative w-full max-w-md rounded-xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
+                  <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-center text-red-600 dark:text-red-400">Confirmar eliminación</h3>
+                    <p class="mt-2 text-sm text-center text-gray-600 dark:text-slate-300">
+                      ¿Eliminar <strong>{{ $p->nombre }}</strong> ({{ $p->dni_nie }})? Esta acción no se puede deshacer.
+                    </p>
+                  </div>
+
+                  <div class="flex items-center justify-center gap-4 p-6">
+                    <form method="POST" action="{{ route('deleteparticipant', $p) }}">
+                      @csrf
+                      {{-- Si tu ruta espera DELETE, descomenta la siguiente línea --}}
+                      {{-- @method('DELETE') --}}
+                      <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">
+                        Sí, eliminar
+                      </button>
+                    </form>
+
+                    <button @click="open=false"
+                            class="px-6 py-2 text-gray-700 dark:text-slate-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-600 dark:hover:bg-slate-700 rounded-lg">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </td>
+
         </tr>
       @empty
         <tr>
