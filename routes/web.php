@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // Auth + Home
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\RegisteredUserController;
+
 
 // Participants & Notas
 use App\Http\Controllers\ParticipantsController;
@@ -22,13 +22,20 @@ use App\Http\Controllers\AgreementsController;
 use App\Http\Controllers\ContractsController;
 use App\Http\Controllers\SSRecordsController;
 use App\Http\Controllers\InsertionChecksController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::get('/', fn () => redirect()->route('login'));
 require __DIR__ . '/auth.php';
 
-// Registro (si lo usas)
-Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-Route::post('register', [RegisteredUserController::class, 'store']);
+
+
+Route::get('/register', [RegisteredUserController::class, 'show'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+
+Route::get('/home', function () {
+    return view('home'); 
+})->name('home');
+
 
 Route::middleware('auth')->group(function () {
 
