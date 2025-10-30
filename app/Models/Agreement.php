@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Agreement extends Model
 {
     protected $table = 'agreements';
-    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [
@@ -30,23 +29,6 @@ class Agreement extends Model
 
     public function company()
     {
-        return $this->belongsTo(\App\Models\Company::class, 'company_id');
-    }
-
-    public function pdf()
-    {
-        return $this->belongsTo(\App\Models\Document::class, 'pdf_doc_id');
-    }
-
-    // Convenio vigente hoy
-    public function getVigenteAttribute(): bool
-    {
-        $hoy = now()->startOfDay();
-        $desde = $this->validez_desde ? $this->validez_desde->startOfDay() : null;
-        $hasta = $this->validez_hasta ? $this->validez_hasta->endOfDay() : null;
-
-        $okDesde = !$desde || $hoy->greaterThanOrEqualTo($desde);
-        $okHasta = !$hasta || $hoy->lessThanOrEqualTo($hasta);
-        return $okDesde && $okHasta;
+        return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 }

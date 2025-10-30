@@ -14,7 +14,10 @@ class ParticipantsController extends Controller
         $this->middleware('auth');
     }
 
-    // LISTADO
+    /**
+     * LISTADO de participantes con búsqueda y métricas.
+     * Carga: tutor, último CV (documents), última nota de trabajador (con usuario), CV (tabla cv).
+     */
     public function participants(Request $request)
     {
         $q = trim((string) $request->get('q'));
@@ -24,7 +27,7 @@ class ParticipantsController extends Controller
                 'tutor',
 
                 // Último CV subido en documents (owner_type='participants', tipo='cv')
-                'cvsDocuments' => fn($q2) => $q2->orderByDesc('fecha')->limit(1),
+                'cvsDocuments' => fn ($q2) => $q2->orderByDesc('fecha')->limit(1),
 
                 // Cargar UNA nota (la última) + su usuario
                 'notasTrabajador' => function ($q2) {
@@ -50,7 +53,7 @@ class ParticipantsController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Inyectamos una relación virtual 'ultimaNota' para que la vista pueda usar $p->ultimaNota
+        // Relación virtual 'ultimaNota' para usar $p->ultimaNota en la vista de listado
         $participants->getCollection()->transform(function ($p) {
             $p->setRelation('ultimaNota', optional($p->getRelation('notasTrabajador'))->first());
             return $p;
@@ -71,26 +74,168 @@ class ParticipantsController extends Controller
         ));
     }
 
-    // VER FICHA
+    /**
+     * FICHA del participante.
+     * Cargamos todas las relaciones necesarias para la vista y las tablas (notas, docs, contratos, etc.).
+     * Esta es la vista que estás usando: participants.viewparticipant
+     */
     public function viewParticipant(Participant $participant)
     {
         $participant->load([
             'tutor',
-            'cvsDocuments' => fn($q) => $q->orderByDesc('fecha'),
+
+            // Notas del trabajador (todas) + usuario, en orden descendente por fecha
+            'notasTrabajador' => fn ($q) => $q->with('usuario')->orderByDesc('fecha_hora'),
+
+            // Documents (todos) y sólo CVs por si tu vista los necesita
+            'documents'    => fn ($q) => $q->orderByDesc('fecha'),
+            'cvsDocuments' => fn ($q) => $q->where('tipo', 'cv')->orderByDesc('fecha'),
             'cvFile',
-            'notasTrabajador' => fn($q) => $q->orderByDesc('fecha_hora')->with('usuario'),
+
+            // Resto de relaciones comunes en la ficha
+            'applications'           => fn ($q) => $q->orderByDesc('fecha'),
+            'applications.offer.company',
+            'contracts'              => fn ($q) => $q->orderByDesc('fecha_inicio'),
+            'contracts.company',
+            'contracts.offer.company',
+            'ssRecords',
+            'insertionChecks',
         ]);
 
-        return view('participants.viewparticipant', compact('participant'));
+        // Si tu Blade usa 'timelineEvents' (preview), lo preparamos. Si no, puedes omitirlo.
+        $events = collect();
+
+        // Alta en programa
+        if ($participant->fecha_alta_prog) {
+            $events->push([
+                'date'  => optional($participant->fecha_alta_prog)->startOfDay(),
+                'title' => 'Alta en programa',
+                'desc'  => 'Alta del participante en el programa.',
+                'type'  => 'participant',
+                'icon'  => 'fa-user',
+                'color' => 'indigo',
+            ]);
+        }
+
+        // Notas
+        foreach ($participant->notasTrabajador as $n) {
+            $events->push([
+                'date'  => optional($n->fecha_hora),
+                'title' => 'Nota de trabajador',
+                'desc'  => Str::limit($n->texto, 300),
+                'type'  => 'note',
+                'icon'  => 'fa-note-sticky',
+                'color' => 'amber',
+            ]);
+        }
+
+        // CV - documents (tipo cv)
+        foreach ($participant->cvsDocuments as $cvd) {
+            $events->push([
+                'date'  => optional($cvd->fecha),
+                'title' => 'CV subido (Documents)',
+                'desc'  => $cvd->nombre_archivo,
+                'type'  => 'cv',
+                'icon'  => 'fa-file-lines',
+                'color' => 'emerald',
+            ]);
+        }
+
+        // CV - tabla cv (si existe)
+        if ($participant->cvFile) {
+            $events->push([
+                'date'  => optional($participant->cvFile->fecha_subida),
+                'title' => 'CV vinculado (tabla cv)',
+                'desc'  => $participant->cvFile->ruta_archivo,
+                'type'  => 'cv',
+                'icon'  => 'fa-file-lines',
+                'color' => 'emerald',
+            ]);
+        }
+
+        // Documentos no-cv (ya vienen cargados en 'documents')
+        foreach ($participant->documents->filter(fn ($d) => ($d->tipo ?? null) !== 'cv') as $doc) {
+            $events->push([
+                'date'  => optional($doc->fecha),
+                'title' => 'Documento',
+                'desc'  => $doc->nombre_archivo,
+                'type'  => 'document',
+                'icon'  => 'fa-file',
+                'color' => 'slate',
+            ]);
+        }
+
+        // Contratos
+        foreach ($participant->contracts as $c) {
+            $events->push([
+                'date'  => optional($c->fecha_inicio),
+                'title' => 'Contrato',
+                'desc'  => 'Tipo: ' . ($c->tipo_contrato ?? '—'),
+                'type'  => 'contract',
+                'icon'  => 'fa-file-signature',
+                'color' => 'purple',
+            ]);
+        }
+
+        // Candidaturas
+        foreach ($participant->applications as $ap) {
+            $events->push([
+                'date'  => optional($ap->fecha ?? $ap->created_at),
+                'title' => 'Candidatura',
+                'desc'  => $ap->offer ? ('Oferta #'.$ap->offer->id.' '.$ap->offer->puesto) : 'Candidatura',
+                'type'  => 'application',
+                'icon'  => 'fa-user-check',
+                'color' => 'sky',
+            ]);
+        }
+
+        // Registros SS
+        foreach ($participant->ssRecords as $ss) {
+            $events->push([
+                'date'  => optional($ss->created_at),
+                'title' => 'Registro Seguridad Social',
+                'desc'  => $ss->observaciones ?? ('Régimen: '.$ss->regimen),
+                'type'  => 'ss',
+                'icon'  => 'fa-shield-halved',
+                'color' => 'rose',
+            ]);
+        }
+
+        // Insertion Checks
+        foreach ($participant->insertionChecks as $ic) {
+            $events->push([
+                'date'  => optional($ic->fecha ?? $ic->created_at),
+                'title' => 'Validación de inserción',
+                'desc'  => $ic->observaciones ?? 'Validación',
+                'type'  => 'insertion',
+                'icon'  => 'fa-circle-check',
+                'color' => 'emerald',
+            ]);
+        }
+
+        $timelineEvents = $events
+            ->filter(fn ($e) => !empty($e['date']))
+            ->sortByDesc('date')
+            ->values()
+            ->take(15);
+
+        return view('participants.viewparticipant', [
+            'participant'    => $participant,
+            'timelineEvents' => $timelineEvents,
+        ]);
     }
 
-    // NUEVO (form)
+    /**
+     * NUEVO (form)
+     */
     public function addParticipant()
     {
         return view('participants.addparticipant');
     }
 
-    // GUARDAR (POST)
+    /**
+     * GUARDAR (POST)
+     */
     public function saveParticipant(Request $request)
     {
         $validated = $request->validate([
@@ -102,7 +247,7 @@ class ParticipantsController extends Controller
             'provincia'        => ['nullable', 'max:40'],
             'estado'           => ['nullable', 'max:20'],
             'notas'            => ['nullable', 'string'],
-            'observaciones2'   => ['nullable', 'string'],   // ⬅ NUEVO CAMPO
+            'observaciones2'   => ['nullable', 'string'],
             'tutor_id'         => ['nullable', 'integer', 'exists:users,id'],
             'id_cv'            => ['nullable', 'integer', 'exists:cv,id'],
         ]);
@@ -117,13 +262,17 @@ class ParticipantsController extends Controller
         return redirect()->route('participants')->with('success', 'Participante creado correctamente.');
     }
 
-    // EDITAR (form)
+    /**
+     * EDITAR (form)
+     */
     public function editParticipant(Participant $participant)
     {
         return view('participants.editparticipant', compact('participant'));
     }
 
-    // ACTUALIZAR (POST)
+    /**
+     * ACTUALIZAR (POST)
+     */
     public function updateParticipant(Request $request, Participant $participant)
     {
         $validated = $request->validate([
@@ -135,7 +284,7 @@ class ParticipantsController extends Controller
             'provincia'        => ['nullable', 'max:40'],
             'estado'           => ['nullable', 'max:20'],
             'notas'            => ['nullable', 'string'],
-            'observaciones2'   => ['nullable', 'string'],   // ⬅ NUEVO CAMPO
+            'observaciones2'   => ['nullable', 'string'],
             'tutor_id'         => ['nullable', 'integer', 'exists:users,id'],
             'id_cv'            => ['nullable', 'integer', 'exists:cv,id'],
         ]);
@@ -150,7 +299,9 @@ class ParticipantsController extends Controller
         return redirect()->route('participants')->with('success', 'Participante actualizado correctamente.');
     }
 
-    // ELIMINAR
+    /**
+     * ELIMINAR
+     */
     public function deleteParticipant(Participant $participant)
     {
         try {
@@ -162,7 +313,9 @@ class ParticipantsController extends Controller
         }
     }
 
-    // TIMELINE
+    /**
+     * TIMELINE completo (si usas una vista dedicada)
+     */
     public function timeline(Participant $participant)
     {
         $participant->load([

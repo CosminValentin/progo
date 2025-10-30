@@ -47,10 +47,11 @@ class CvController extends Controller
     }
 
     // NUEVO
-    public function create()
+    public function create(Request $request)
     {
         $participants = Participant::orderBy('nombre')->get(['id','nombre']);
-        return view('cv.create', compact('participants'));
+        $prefill = (int) $request->get('participant_id');
+        return view('cv.create', compact('participants','prefill'));
     }
 
     // GUARDAR
@@ -88,10 +89,43 @@ class CvController extends Controller
         return redirect()->route('cvs.index')->with('success','CV subido correctamente.');
     }
 
+    // VER INLINE (mostrar en navegador)
+    public function show(Document $cv)
+    {
+        if ($cv->tipo !== 'cv' || $cv->owner_type !== 'participants') {
+            return redirect()->route('cvs.index')->with('error','Este registro no es un CV válido.');
+        }
+
+        $rel = 'documents/'.$cv->hash;
+
+        // Si está en storage local/app/documents
+        if (Storage::disk('local')->exists($rel)) {
+            $mime   = $this->guessMime($cv->nombre_archivo) ?? 'application/octet-stream';
+            $stream = Storage::disk('local')->readStream($rel);
+
+            return response()->stream(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type'        => $mime,
+                'Content-Disposition' => 'inline; filename="'.$cv->nombre_archivo.'"',
+            ]);
+        }
+
+        // Fallback por si el hash está en public/ (poco probable)
+        if (is_file(public_path($cv->hash))) {
+            $mime = mime_content_type(public_path($cv->hash)) ?: 'application/octet-stream';
+            return response()->file(public_path($cv->hash), [
+                'Content-Type'        => $mime,
+                'Content-Disposition' => 'inline; filename="'.$cv->nombre_archivo.'"',
+            ]);
+        }
+
+        abort(404, 'Fichero de CV no encontrado.');
+    }
+
     // EDITAR
     public function edit(Document $cv)
     {
-        // Solo permitir editar documentos que realmente sean tipo CV de participante
         if ($cv->tipo !== 'cv' || $cv->owner_type !== 'participants') {
             return redirect()->route('cvs.index')->with('error','Este registro no es un CV válido.');
         }
@@ -100,7 +134,7 @@ class CvController extends Controller
         return view('cv.edit', compact('cv','participants'));
     }
 
-    // ACTUALIZAR (puede cambiar de participante y opcionalmente reemplazar el archivo)
+    // ACTUALIZAR
     public function update(Request $request, Document $cv)
     {
         if ($cv->tipo !== 'cv' || $cv->owner_type !== 'participants') {
@@ -129,7 +163,7 @@ class CvController extends Controller
                 $hash .= '.' . $ext;
             }
 
-            // Borrar el anterior si existe
+            // Borrar anterior si existe
             if (!empty($cv->hash)) {
                 $old = 'documents/'.$cv->hash;
                 if (Storage::disk('local')->exists($old)) {
@@ -140,7 +174,7 @@ class CvController extends Controller
             Storage::disk('local')->put('documents/'.$hash, file_get_contents($file->getRealPath()));
             $cv->hash           = $hash;
             $cv->nombre_archivo = $origName;
-            $cv->fecha          = now(); // actualizamos fecha si se reemplaza
+            $cv->fecha          = now(); // actualizamos fecha
             $cv->uploader_id    = auth()->id();
         }
 
@@ -161,7 +195,7 @@ class CvController extends Controller
             return redirect()->back()->with('error','El fichero no existe en el almacenamiento.');
         }
 
-        return Storage::disk('local')->download($path, $cv->nombre_archivo ?? 'cv'.($cv->id).'.dat');
+        return Storage::disk('local')->download($path, $cv->nombre_archivo ?? ('cv_'.$cv->id.'.dat'));
     }
 
     // ELIMINAR
@@ -176,7 +210,6 @@ class CvController extends Controller
         }
 
         try {
-            // Borrar archivo físico
             if ($cv->hash) {
                 $path = 'documents/'.$cv->hash;
                 if (Storage::disk('local')->exists($path)) {
@@ -189,5 +222,19 @@ class CvController extends Controller
         } catch (\Throwable $e) {
             return redirect()->route('cvs.index')->with('error','No se pudo eliminar el CV.');
         }
+    }
+
+    private function guessMime(?string $filename): ?string
+    {
+        if (!$filename) return null;
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        return match ($ext) {
+            'pdf'  => 'application/pdf',
+            'doc'  => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'rtf'  => 'application/rtf',
+            'odt'  => 'application/vnd.oasis.opendocument.text',
+            default => null,
+        };
     }
 }

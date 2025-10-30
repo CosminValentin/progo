@@ -1,3 +1,20 @@
+@if(request()->boolean('modal'))
+
+  <form action="{{ route('notas.update', $nota) }}" method="POST"
+        class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 sm:p-8 shadow">
+    @csrf
+    @method('PUT')
+    @include('components.modal-hidden')
+    @include('notas_trabajador._form', [
+      'nota' => $nota,
+      'participants' => $participants,
+      'participant' => null,
+      'isModal' => true
+    ])
+  </form>
+
+@else
+
 @extends('layouts.app_windmill')
 
 @section('header')
@@ -18,6 +35,12 @@
         class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-lg">
     @csrf
     @method('PUT')
-    @include('notas_trabajador._form', ['nota' => $nota, 'participants' => $participants])
+    @include('notas_trabajador._form', [
+      'nota' => $nota,
+      'participants' => $participants,
+      'isModal' => false
+    ])
   </form>
 @endsection
+
+@endif

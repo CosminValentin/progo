@@ -7,8 +7,10 @@
       <p class="text-sm text-gray-500 dark:text-slate-400">Fecha: {{ optional($offer->fecha)->format('d/m/Y') }}</p>
     </div>
     <div class="flex gap-2">
-      <a href="{{ route('editoffer', $offer) }}" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Editar</a>
-      <a href="{{ route('offers') }}" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
+      <a href="{{ route('offers.edit', $offer) }}"
+         class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Editar</a>
+      <a href="{{ route('offers.index') }}"
+         class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
     </div>
   </div>
 @endsection

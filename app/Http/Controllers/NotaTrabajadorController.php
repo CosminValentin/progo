@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 
 use App\Models\NotaTrabajador;
 use App\Models\Participant;
@@ -57,75 +58,110 @@ class NotaTrabajadorController extends Controller
         return view('notas_trabajador.create', compact('participant', 'participants'));
     }
 
+// app/Http/Controllers/NotaTrabajadorController.php
     public function store(Request $request)
     {
-        // Acepta tanto id_participante (nuevo) como participant_id (legacy)
-        if ($request->filled('participant_id') && !$request->filled('id_participante')) {
-            $request->merge(['id_participante' => $request->input('participant_id')]);
-        }
+        $user = auth()->user();
 
-        $validated = $request->validate([
-            'id_participante' => ['required', 'exists:participants,id'],
-            'texto'           => ['required', 'string'],
-            'fecha_hora'      => ['required', 'date'],
-            'estado'          => ['nullable', 'string'],
+        $data = $request->validate([
+            'id_participante' => ['required','integer','exists:participants,id'],
+            'texto'           => ['required','string'],
+            'fecha_hora'      => ['nullable','date'],
+            'estado'          => ['nullable','in:activo,seguimiento,cerrado'],
         ]);
 
-        // ✅ Asignación explícita (no dependemos de fill()/create())
-        $nota = new NotaTrabajador();
-        $nota->id_participante       = (int) $validated['id_participante'];
-        $nota->id_usuario_trabajador = auth()->id();
-        $nota->texto                 = $validated['texto'];
-        $nota->fecha_hora            = $validated['fecha_hora'];
-        $nota->estado                = $validated['estado'] ?? 'activo';
-        $nota->save();
+        $fecha = $data['fecha_hora'] ?? now();
+        if (is_string($fecha)) {
+            try { $fecha = Carbon::parse($fecha); } catch (\Throwable $e) { $fecha = now(); }
+        }
 
-        return redirect()->route('notas.index')->with('success', 'Nota creada correctamente.');
+        $nota = NotaTrabajador::create([
+            'id_participante'       => $data['id_participante'],
+            'id_usuario_trabajador' => $user->id,
+            'texto'                 => $data['texto'],
+            'fecha_hora'            => $fecha,
+            'estado'                => $data['estado'] ?? null,
+        ]);
+
+        if ($request->expectsJson()) {
+            $nota->loadMissing(['usuario']);
+            return response()->json([
+                'id'               => $nota->id,
+                'texto'            => $nota->texto,
+                'estado'           => (string)$nota->estado,
+                'fecha_hora_iso'   => optional($nota->fecha_hora)->toIso8601String(),
+                'fecha_hora_local' => optional($nota->fecha_hora)->format('Y-m-d\TH:i'),
+                'fecha_hora_hum'   => optional($nota->fecha_hora)->format('d/m/Y H:i'),
+                'usuario'          => ['name' => optional($nota->usuario)->name],
+                'usuario_name'     => optional($nota->usuario)->name,
+                'update_url'       => route('notas.update', $nota),
+                'delete_url'       => route('notas.destroy', $nota),
+            ]);
+        }
+
+        return redirect()
+            ->route('viewparticipant', ['participant' => $data['id_participante']])
+            ->with('success', 'Nota creada correctamente.');
     }
 
-
-    // FORMULARIO EDITAR
-    public function edit(NotaTrabajador $nota)
-    {
-        $nota->load(['usuario', 'participant']);
-        $participants = Participant::orderBy('nombre')->get(['id', 'nombre']);
-        return view('notas_trabajador.edit', compact('nota', 'participants'));
-    }
-
-    // ACTUALIZAR
     public function update(Request $request, NotaTrabajador $nota)
     {
-        if ($request->filled('participant_id') && !$request->filled('id_participante')) {
-            $request->merge(['id_participante' => $request->input('participant_id')]);
-        }
+        $user = auth()->user();
 
-        $validated = $request->validate([
-            'id_participante' => ['required', 'exists:participants,id'],
-            'texto'           => ['required', 'string'],
-            'fecha_hora'      => ['required', 'date'],
-            'estado'          => ['nullable', 'string'],
+        $data = $request->validate([
+            'id_participante' => ['nullable','integer','exists:participants,id'],
+            'texto'           => ['required','string'],
+            'fecha_hora'      => ['nullable','date'],
+            'estado'          => ['nullable','in:activo,seguimiento,cerrado'],
         ]);
 
-        // ✅ Asignación explícita (evita que un mal fillable/guarded te lo deje a NULL)
-        $nota->id_participante = (int) $validated['id_participante'];
-        $nota->texto           = $validated['texto'];
-        $nota->fecha_hora      = $validated['fecha_hora'];
-        $nota->estado          = $validated['estado'] ?? $nota->estado;
-        $nota->save();
+        $participantId = $data['id_participante'] ?? $nota->id_participante;
 
-        return redirect()->route('notas.index')->with('success', 'Nota actualizada correctamente.');
+        $fecha = $data['fecha_hora'] ?? $nota->fecha_hora;
+        if (is_string($fecha)) {
+            try { $fecha = Carbon::parse($fecha); } catch (\Throwable $e) { $fecha = $nota->fecha_hora; }
+        }
+
+        $nota->update([
+            'texto'                 => $data['texto'],
+            'fecha_hora'            => $fecha,
+            'estado'                => $data['estado'] ?? null,
+            'id_usuario_trabajador' => $user->id,
+        ]);
+
+        if ($request->expectsJson()) {
+            $nota->loadMissing(['usuario']);
+            return response()->json([
+                'id'               => $nota->id,
+                'texto'            => $nota->texto,
+                'estado'           => (string)$nota->estado,
+                'fecha_hora_iso'   => optional($nota->fecha_hora)->toIso8601String(),
+                'fecha_hora_local' => optional($nota->fecha_hora)->format('Y-m-d\TH:i'),
+                'fecha_hora_hum'   => optional($nota->fecha_hora)->format('d/m/Y H:i'),
+                'usuario'          => ['name' => optional($nota->usuario)->name],
+                'usuario_name'     => optional($nota->usuario)->name,
+                'update_url'       => route('notas.update', $nota),
+                'delete_url'       => route('notas.destroy', $nota),
+            ]);
+        }
+
+        return redirect()
+            ->route('viewparticipant', ['participant' => $participantId])
+            ->with('success', 'Nota actualizada.');
     }
 
-
-    // ELIMINAR
-    public function destroy(NotaTrabajador $nota)
+    public function destroy(Request $request, NotaTrabajador $nota)
     {
-        try {
-            $nota->delete();
-            return redirect()->route('notas.index')->with('success', 'Nota eliminada correctamente.');
-        } catch (\Throwable $e) {
-            return redirect()->route('notas.index')
-                ->with('error', 'No se pudo eliminar la nota. Puede estar relacionada con otros registros.');
+        $participantId = $request->input('id_participante') ?: $nota->id_participante;
+
+        $nota->delete();
+
+        if ($request->expectsJson()) {
+            return response()->noContent(); // 204
         }
+
+        return redirect()
+            ->route('viewparticipant', ['participant' => $participantId])
+            ->with('success', 'Nota eliminada.');
     }
 }

@@ -6,7 +6,7 @@
       <h1 class="text-3xl font-bold text-indigo-700 dark:text-indigo-400">Ofertas</h1>
       <p class="text-sm text-gray-600 dark:text-slate-400">Gestiona altas, ediciones y bajas.</p>
     </div>
-    <a href="{{ route('addoffer') }}"
+    <a href="{{ route('offers.create') }}"
        class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg transition">
       <i class="fa-solid fa-plus"></i> Nueva
     </a>
@@ -63,7 +63,7 @@
   </div>
 
   <!-- Buscador -->
-  <form method="GET" action="{{ route('offers') }}" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <form method="GET" action="{{ route('offers.index') }}" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="col-span-2">
       <div class="relative">
         <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Buscar por DNI/NIE, nombre o email…"
@@ -73,11 +73,10 @@
     </div>
     <div class="flex gap-3">
       <button class="flex-1 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Buscar</button>
-      <a href="{{ route('offers') }}"
+      <a href="{{ route('offers.index') }}"
         class="flex-1 px-5 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Limpiar</a>
     </div>
   </form>
-
 
   <!-- Tabla -->
   <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
@@ -106,8 +105,8 @@
             </td>
             <td class="px-5 py-4">
               <div class="flex justify-end gap-2" x-data="{open:false}">
-                <a href="{{ route('viewoffer', $o) }}" class="px-3 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition">Ver</a>
-                <a href="{{ route('editoffer', $o) }}" class="px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition">Editar</a>
+                <a href="{{ route('offers.show', $o) }}" class="px-3 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition">Ver</a>
+                <a href="{{ route('offers.edit', $o) }}" class="px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition">Editar</a>
                 <button @click="open=true" class="px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition">Borrar</button>
 
                 <!-- Modal -->
@@ -119,7 +118,7 @@
                       <p class="mt-2 text-sm text-center text-gray-600 dark:text-slate-300">¿Eliminar la oferta <strong>{{ $o->puesto }}</strong>?</p>
                     </div>
                     <div class="flex items-center justify-center gap-4 p-6">
-                      <form method="POST" action="{{ route('deleteoffer', $o) }}">
+                      <form method="POST" action="{{ route('offers.destroy', $o) }}">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg">Eliminar</button>

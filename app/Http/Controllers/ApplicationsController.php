@@ -10,15 +10,14 @@ use Illuminate\Validation\Rule;
 
 class ApplicationsController extends Controller
 {
-    
     public function index(Request $request)
     {
         $q = trim((string) $request->get('q'));
 
-        $query = Application::query()
-            ->with(['participant', 'offer'])
-            ->when($q, function ($qbuilder) use ($q) {
-                $qbuilder->where(function ($w) use ($q) {
+        $applications = Application::query()
+            ->with(['participant', 'offer.company'])
+            ->when($q, function ($qb) use ($q) {
+                $qb->where(function ($w) use ($q) {
                     $w->whereHas('participant', function ($p) use ($q) {
                         $p->where('nombre', 'like', "%{$q}%")
                           ->orWhere('dni_nie', 'like', "%{$q}%")
@@ -26,79 +25,81 @@ class ApplicationsController extends Controller
                     })
                     ->orWhereHas('offer', function ($o) use ($q) {
                         $o->where('puesto', 'like', "%{$q}%")
-                          ->orWhere('ubicacion', 'like', "%{$q}%")
-                          ->orWhere('estado', 'like', "%{$q}%");
+                          ->orWhereHas('company', function ($c) use ($q) {
+                              $c->where('nombre', 'like', "%{$q}%");
+                          });
                     })
                     ->orWhere('estado', 'like', "%{$q}%");
                 });
             })
             ->orderByDesc('fecha')
-            ->orderByDesc('id');
+            ->orderByDesc('id')
+            ->paginate(12)
+            ->withQueryString();
 
-        $applications = $query->paginate(12)->withQueryString();
-
-        return view('applications.applications', [
-            'applications' => $applications,
-            'q' => $q,
-        ]);
-    }
-
-    public function create()
-    {
-        $participants = Participant::orderBy('nombre')->get(['id', 'nombre', 'dni_nie']);
-        $offers       = Offer::orderByDesc('fecha')->orderByDesc('id')->get(['id', 'puesto']);
-        $estados      = ['pendiente','en_proceso','aceptada','rechazada'];
-
-        return view('applications.addapplication', compact('participants', 'offers', 'estados'));
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'participant_id' => ['required','integer','exists:participants,id'],
-            'offer_id'       => ['required','integer','exists:offers,id'],
-            'estado'         => ['required', Rule::in(['pendiente','en_proceso','aceptada','rechazada'])],
-            'fecha'          => ['required','date'],
-        ]);
-
-        Application::create($validated);
-
-        return redirect()->route('applications')->with('success', 'Candidatura creada correctamente.');
+        return view('applications.applications', compact('applications', 'q'));
     }
 
     public function show(Application $application)
     {
-        $application->load(['participant', 'offer']);
+        $application->load(['participant', 'offer.company']);
         return view('applications.viewapplication', compact('application'));
     }
 
     public function edit(Application $application)
     {
-        $application->load(['participant','offer']);
-        $participants = Participant::orderBy('nombre')->get(['id', 'nombre', 'dni_nie']);
-        $offers       = Offer::orderByDesc('fecha')->orderByDesc('id')->get(['id','puesto']);
-        $estados      = ['pendiente','en_proceso','aceptada','rechazada'];
+        $application->load(['participant', 'offer.company']);
+        $offers = Offer::with('company')->orderByDesc('fecha')->get();
+        return view('applications.editapplication', compact('application', 'offers'));
+    }
 
-        return view('applications.editapplication', compact('application','participants','offers','estados'));
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'participant_id' => ['required', 'exists:participants,id'],
+            'offer_id'       => ['required', 'exists:offers,id'],
+            'estado'         => ['required', Rule::in(['pendiente','en_proceso','aceptada','rechazada'])],
+            'fecha'          => ['required', 'date'],
+        ]);
+
+        $app = new Application();
+        $app->participant_id = $data['participant_id'];
+        $app->offer_id       = $data['offer_id'];
+        $app->estado         = $data['estado'];
+        $app->fecha          = $data['fecha'];
+        $app->save();
+
+        return $request->wantsJson()
+            ? response()->json(['ok' => true, 'id' => $app->id], 201)
+            : back()->with('success', 'Candidatura creada correctamente.');
     }
 
     public function update(Request $request, Application $application)
     {
-        $validated = $request->validate([
-            'participant_id' => ['required','integer','exists:participants,id'],
-            'offer_id'       => ['required','integer','exists:offers,id'],
+        $data = $request->validate([
+            'participant_id' => ['required', 'exists:participants,id'],
+            'offer_id'       => ['required', 'exists:offers,id'],
             'estado'         => ['required', Rule::in(['pendiente','en_proceso','aceptada','rechazada'])],
-            'fecha'          => ['required','date'],
+            'fecha'          => ['required', 'date'],
         ]);
 
-        $application->update($validated);
+        $application->participant_id = $data['participant_id'];
+        $application->offer_id       = $data['offer_id'];
+        $application->estado         = $data['estado'];
+        $application->fecha          = $data['fecha'];
+        $application->save();
 
-        return redirect()->route('applications')->with('success', 'Candidatura actualizada.');
+        return $request->wantsJson()
+            ? response()->json(['ok' => true], 200)
+            : back()->with('success', 'Candidatura actualizada correctamente.');
     }
 
-    public function destroy(Application $application)
+    public function destroy(Request $request, Application $application)
     {
         $application->delete();
-        return redirect()->route('applications')->with('success', 'Candidatura eliminada.');
+
+        return $request->wantsJson()
+            ? response()->json(['ok' => true], 200)
+            : back()->with('success', 'Candidatura eliminada correctamente.');
     }
 }

@@ -8,28 +8,35 @@ use Illuminate\Http\Request;
 
 class OffersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request)
     {
-        $q = trim((string)$request->get('q'));
+        $q = trim((string) $request->get('q'));
 
         $offers = Offer::query()
             ->with('company')
-            ->when($q, function($qb) use ($q) {
-                $qb->where('puesto', 'like', "%{$q}%")
-                   ->orWhere('ubicacion', 'like', "%{$q}%")
-                   ->orWhere('tipo_contrato', 'like', "%{$q}%")
-                   ->orWhere('estado', 'like', "%{$q}%")
-                   ->orWhereHas('company', function($c) use ($q) {
-                       $c->where('nombre', 'like', "%{$q}%")
-                         ->orWhere('cif_nif', 'like', "%{$q}%");
-                   });
+            ->when($q, function ($qb) use ($q) {
+                $qb->where(function ($w) use ($q) {
+                        $w->where('puesto', 'like', "%{$q}%")
+                          ->orWhere('ubicacion', 'like', "%{$q}%")
+                          ->orWhere('tipo_contrato', 'like', "%{$q}%")
+                          ->orWhere('estado', 'like', "%{$q}%");
+                    })
+                    ->orWhereHas('company', function ($c) use ($q) {
+                        $c->where('nombre', 'like', "%{$q}%")
+                          ->orWhere('cif_nif', 'like', "%{$q}%");
+                    });
             })
             ->orderByDesc('fecha')
             ->orderByDesc('id')
             ->paginate(12)
             ->withQueryString();
 
-        return view('offers.offers', compact('offers','q'));
+        return view('offers.offers', compact('offers', 'q'));
     }
 
     public function create()
@@ -52,7 +59,13 @@ class OffersController extends Controller
         ]);
 
         Offer::create($validated);
-        return redirect()->route('offers')->with('success', 'Oferta creada correctamente.');
+
+        // Si viene de modal (AJAX), devolvemos JSON y nos quedamos en la ficha
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('offers.index')->with('success', 'Oferta creada correctamente.');
     }
 
     public function show(Offer $offer)
@@ -81,12 +94,22 @@ class OffersController extends Controller
         ]);
 
         $offer->update($validated);
-        return redirect()->route('offers')->with('success', 'Oferta actualizada.');
+
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('offers.index')->with('success', 'Oferta actualizada.');
     }
 
-    public function destroy(Offer $offer)
+    public function destroy(Request $request, Offer $offer)
     {
         $offer->delete();
-        return redirect()->route('offers')->with('success', 'Oferta eliminada.');
+
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('offers.index')->with('success', 'Oferta eliminada.');
     }
 }

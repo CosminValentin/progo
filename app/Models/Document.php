@@ -10,9 +10,9 @@ class Document extends Model
     public $timestamps = false; // la tabla usa 'fecha' en vez de created_at/updated_at
 
     protected $fillable = [
-        'owner_type',     // 'participants' | 'companies' | 'offers' | 'users'
+        'owner_type',
         'owner_id',
-        'tipo',           // 'cv' | 'contrata' | etc
+        'tipo',
         'nombre_archivo',
         'hash',
         'uploader_id',
@@ -21,10 +21,10 @@ class Document extends Model
     ];
 
     protected $casts = [
-        'fecha'     => 'datetime',
+        'fecha' => 'datetime',
         'protegido' => 'boolean',
     ];
-
+    
     // Polimórfica con morphMap (AppServiceProvider->Relation::enforceMorphMap([...]))
     public function owner()
     {

@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Participant extends Model
 {
     protected $table = 'participants';
 
-protected $fillable = [
-  'dni_nie','nombre','telefono','email','fecha_alta_prog','provincia',
-  'tutor_id','estado','consent_rgpd','notas','observaciones2','id_cv'
-];
+    protected $fillable = [
+    'dni_nie','nombre','telefono','email','fecha_alta_prog','provincia',
+    'tutor_id','estado','consent_rgpd','notas','observaciones2','id_cv'
+    ];
 
     public $timestamps = false; // si tu tabla no usa timestamps (según tu dump)
 
@@ -20,28 +21,6 @@ protected $fillable = [
         return $this->belongsTo(User::class, 'tutor_id');
     }
 
-    /**
-     * Documentos polimórficos (Document.owner_type = 'participants')
-
-
-    
-     * CVs almacenados en documents con tipo='cv' (si los usas)
-     */
-
-    /**
-     * Relación al CV de la tabla cv (FK participants.id_cv -> cv.id)
-     */
-
-
-    /**
-     * Todas las notas del trabajador (FK real id_participante)
-     */
-
-
-    /**
-     * Última nota del trabajador por fecha_hora (sin romper por PK distinta)
-     * latestOfMany usará la PK de NotaTrabajador (id_nota) porque la hemos definido.
-     */
     public function ultimaNota()
     {
         return $this->hasOne(NotaTrabajador::class, 'id_participante')->latestOfMany('fecha_hora');
@@ -71,8 +50,13 @@ protected $fillable = [
         return $this->belongsTo(\App\Models\Cv::class, 'id_cv', 'id');
     }
 
-    // Notas trabajador (tabla notas_trabajador)
-    public function notasTrabajador() {
-        return $this->hasMany(\App\Models\NotaTrabajador::class, 'id_participante', 'id');
+
+    public function notasTrabajador(): HasMany
+    {
+        return $this->hasMany(\App\Models\NotaTrabajador::class, 'id_participante', 'id')
+                    ->with('usuario')
+                    ->orderByDesc('fecha_hora');
     }
+
+    
 }

@@ -4,9 +4,14 @@
   <div class="flex items-end justify-between">
     <div>
       <h1 class="text-2xl font-bold">Editar oferta</h1>
-      <p class="text-sm text-gray-500 dark:text-slate-400">Actualiza la información de <strong>{{ $offer->display_title }}</strong>.</p>
+      <p class="text-sm text-gray-500 dark:text-slate-400">
+        Actualiza la información de <strong>{{ $offer->display_title }}</strong>.
+      </p>
     </div>
-    <a href="{{ route('offers') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
+    <a href="{{ route('offers.index') }}"
+       class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+      Volver
+    </a>
   </div>
 @endsection
 
@@ -21,9 +26,10 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('updateoffer', $offer) }}"
+    <form method="POST" action="{{ route('offers.update', $offer) }}"
           class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
       @csrf
+      @method('PUT')
 
       @include('offers._form', ['offer' => $offer, 'companies' => $companies])
 
@@ -42,16 +48,21 @@
       <div x-transition class="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
         <div class="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
           <h3 class="text-lg font-semibold text-center">Eliminar oferta</h3>
-          <p class="mt-1 text-sm text-center text-gray-500 dark:text-slate-300">
+          <p class="mt-1 text-sm text-gray-500 dark:text-slate-300 text-center">
             ¿Eliminar <strong>{{ $offer->display_title }}</strong>?
           </p>
         </div>
         <div class="px-6 py-5 flex flex-col sm:flex-row sm:justify-between gap-3">
-          <button @click="open=false" class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/60">Cancelar</button>
-          <form method="POST" action="{{ route('deleteoffer', $offer) }}">
+          <button @click="open=false"
+                  class="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/60">
+            Cancelar
+          </button>
+          <form method="POST" action="{{ route('offers.destroy', $offer) }}">
             @csrf
             @method('DELETE')
-            <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">Sí, eliminar</button>
+            <button class="px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 text-white hover:shadow dark:from-rose-500 dark:to-red-500">
+              Sí, eliminar
+            </button>
           </form>
         </div>
       </div>

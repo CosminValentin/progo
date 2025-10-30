@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
       x-data="{
-        dark:false, sidebarOpen:false,
+        dark:false, sidebarOpen:false, nav:{gestion:true, docs:true},
         init(){
-          const saved = localStorage.getItem('darkMode');
-          this.dark = saved ? JSON.parse(saved) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const savedDark = localStorage.getItem('darkMode');
+          const savedSide = localStorage.getItem('sidebarOpen');
+          const savedNav  = localStorage.getItem('navGroups');
+
+          this.dark = savedDark ? JSON.parse(savedDark) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          this.sidebarOpen = savedSide ? JSON.parse(savedSide) : false;
+          if(savedNav){ try{ this.nav = JSON.parse(savedNav) }catch(e){} }
+
           document.documentElement.classList.toggle('dark', this.dark);
         },
         toggleDark(){
-          this.dark = !this.dark;
+          this.dark=!this.dark;
           document.documentElement.classList.toggle('dark', this.dark);
           localStorage.setItem('darkMode', JSON.stringify(this.dark));
+        },
+        toggleSidebar(){
+          this.sidebarOpen = !this.sidebarOpen;
+          localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
+        },
+        toggleGroup(key){
+          this.nav[key]=!this.nav[key];
+          localStorage.setItem('navGroups', JSON.stringify(this.nav));
         }
       }" x-init="init()" class="h-full">
 <head>
@@ -19,13 +33,13 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="icon" type="image/png" href="{{ asset('brand/progo-logo.png') }}">
   <title>@yield('title', config('app.name', 'PROGO'))</title>
+
   <script>tailwind = { config: { darkMode: 'class' } }</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" referrerpolicy="no-referrer"/>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
   <style>
     [x-cloak]{display:none!important}
@@ -41,65 +55,137 @@
   <!-- Overlay móvil -->
   <div x-cloak x-show="sidebarOpen" x-transition.opacity
        class="fixed inset-0 z-30 bg-black/40 md:hidden"
-       @click="sidebarOpen=false"></div>
+       @click="toggleSidebar()"></div>
 
-  <!-- SIDEBAR -->
-  <aside class="fixed inset-y-0 left-0 z-40 w-64 transform bg-white dark:bg-slate-800
-                 border-r border-gray-200 dark:border-slate-700 thin-scrollbar
-                 md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg"
-         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
-    <div class="h-16 flex items-center px-6 border-b border-gray-200/70 dark:border-slate-700/60">
-      <a href="{{ url('/home') }}" class="inline-flex items-center gap-2">
-        <x-application-logo size="h-16 md:h-24" />
-        <span class="sr-only">PROGO</span>
-      </a>
+  <!-- ========== SIDEBAR ========== -->
+@php
+  // ===== Navegación (tus rutas) =====
+  $nav = [
+    'gestion' => [
+      'label' => 'Gestión',
+      'items' => [
+        ['url'=>'/participants',        'label'=>'Personas participantes',        'icon'=>'fa-users',           'match'=>'participants*'],
+        ['url'=>'/companies',           'label'=>'Empresas',             'icon'=>'fa-building',        'match'=>'companies*'],
+        ['url'=>'/agreements',          'label'=>'Convenios con empresas',            'icon'=>'fa-handshake',       'match'=>'agreements*'],
+        ['url'=>'/offers',              'label'=>'Ofertas de empleo',              'icon'=>'fa-briefcase',       'match'=>'offers*'],
+        ['url'=>'/applications',        'label'=>'Solicitudes o Candidaturas',         'icon'=>'fa-user-check',      'match'=>'applications*'],
+        ['url'=>'/contracts',           'label'=>'Contratos laborales',            'icon'=>'fa-file-signature',  'match'=>'contracts*'],
+        ['url'=>'/ss-records',          'label'=>'Altas Seguridad Social',         'icon'=>'fa-shield-halved',   'match'=>'ss-records*'],
+        ['url'=>'/insertion_checks',    'label'=>'Seguimiento laboral','icon'=>'fa-circle-check',   'match'=>'insertion_checks*'],
+      ],
+    ],
+    'docs' => [
+      'label' => 'Documentos',
+      'items' => [
+        ['url'=>'/documents',           'label'=>'Documentos',           'icon'=>'fa-folder-open',     'match'=>'documents*'],
+        ['url'=>'/cvs',                 'label'=>'CVs',                  'icon'=>'fa-file-lines',      'match'=>'cvs*'],
+        ['url'=>'/notas',               'label'=>'Notas de Trabajador',  'icon'=>'fa-note-sticky',     'match'=>'notas*'],
+      ],
+    ],
+  ];
+
+  $isActive = fn(string $pattern) => request()->is($pattern);
+@endphp
+
+<aside class="fixed inset-y-0 left-0 z-40 w-64 md:w-64 transform
+              bg-[#27384a] text-slate-100 border-r border-black/10
+              thin-scrollbar md:translate-x-0 transition-transform duration-300 ease-in-out shadow-xl"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
+
+  {{-- Brand --}}
+  <div class="h-16 flex items-center gap-3 px-5 border-b border-white/10">
+    <x-application-logo size="h-9" />
+    <div class="text-xl font-extrabold tracking-wide">PROGO</div>
+  </div>
+
+  {{-- Menú --}}
+  <nav class="px-3 py-4 space-y-3">
+
+    {{-- Dashboard (opcional) --}}
+    <a href="{{ url('/home') }}"
+       class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[15px] font-medium
+              hover:bg-white/10 transition
+              {{ request()->is('home') ? 'bg-sky-600 text-white shadow-inner' : 'text-slate-200' }}">
+      <i class="fa-solid fa-gauge w-5 text-center"></i>
+      <span>Dashboard</span>
+    </a>
+
+    {{-- GRUPO: Gestión --}}
+    <div>
+      <button type="button"
+              @click="toggleGroup('gestion')"
+              class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left
+                     text-[15px] font-semibold tracking-normal"
+              :class="nav.gestion ? 'bg-sky-600 text-white shadow-inner' : 'text-slate-100 hover:bg-white/10 transition'">
+        <span class="inline-flex items-center gap-3">
+          <i class="fa-solid fa-briefcase w-5 text-center"></i>
+          <span class="leading-tight">{{ $nav['gestion']['label'] }}</span>
+        </span>
+        <i class="fa-solid fa-chevron-up text-xs transition" :class="nav.gestion ? 'rotate-0' : 'rotate-180'"></i>
+      </button>
+
+      <div x-cloak x-show="nav.gestion" x-collapse>
+        <ul class="mt-2 space-y-2">
+          @foreach($nav['gestion']['items'] as $link)
+            @php $active = $isActive($link['match']); @endphp
+            <li>
+              <a href="{{ url($link['url']) }}"
+                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg ml-2 transition
+                        {{ $active ? 'bg-sky-600 text-white shadow-inner'
+                                   : 'text-slate-200 hover:bg-white/10' }}">
+                <i class="fa-solid {{ $link['icon'] }} w-5 text-center opacity-90"></i>
+                <span class="text-[15px]">{{ $link['label'] }}</span>
+              </a>
+            </li>
+          @endforeach
+        </ul>
+      </div>
     </div>
 
-    @php
-      $links = [
-        ['url'=>'/participants','label'=>'Participantes','icon'=>'fa-users'],
-        ['url'=>'/companies','label'=>'Empresas','icon'=>'fa-building'],
-        ['url'=>'/agreements','label'=>'Convenios','icon'=>'fa-handshake'],
-        ['url'=>'/offers','label'=>'Ofertas','icon'=>'fa-briefcase'],
-        ['url'=>'/applications','label'=>'Candidaturas','icon'=>'fa-user-check'],
-        ['url'=>'/contracts','label'=>'Contratos','icon'=>'fa-file-signature'],
-        ['url'=>'/ss-records','label'=>'Registros SS','icon'=>'fa-shield-halved'],
-        ['url'=>'/insertion_checks','label'=>'Validación Inserciones','icon'=>'fa-circle-check'],
-        ['url'=>'/documents','label'=>'Documentos','icon'=>'fa-folder-open'],
-        ['url'=>'/cvs','label'=>'CVs','icon'=>'fa-file-lines'], 
-        ['url'=>'/notas','label'=>'Notas de Trabajador','icon'=>'fa-note-sticky'],
+    {{-- GRUPO: Documentos --}}
+    <div>
+      <button type="button"
+              @click="toggleGroup('docs')"
+              class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left
+                     text-[15px] font-semibold tracking-normal"
+              :class="nav.docs ? 'bg-sky-600 text-white shadow-inner' : 'text-slate-100 hover:bg-white/10 transition'">
+        <span class="inline-flex items-center gap-3">
+          <i class="fa-solid fa-folder-open w-5 text-center"></i>
+          <span class="leading-tight">{{ $nav['docs']['label'] }}</span>
+        </span>
+        <i class="fa-solid fa-chevron-up text-xs transition" :class="nav.docs ? 'rotate-0' : 'rotate-180'"></i>
+      </button>
 
-      ];
-    @endphp
+      <div x-cloak x-show="nav.docs" x-collapse>
+        <ul class="mt-2 space-y-2">
+          @foreach($nav['docs']['items'] as $link)
+            @php $active = $isActive($link['match']); @endphp
+            <li>
+              <a href="{{ url($link['url']) }}"
+                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg ml-2 transition
+                        {{ $active ? 'bg-sky-600 text-white shadow-inner'
+                                   : 'text-slate-200 hover:bg-white/10' }}">
+                <i class="fa-solid {{ $link['icon'] }} w-5 text-center opacity-90"></i>
+                <span class="text-[15px]">{{ $link['label'] }}</span>
+              </a>
+            </li>
+          @endforeach
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <nav class="px-3 py-4 space-y-2">
-      @foreach ($links as $link)
-        <a href="{{ url($link['url']) }}"
-           class="flex items-center gap-3 px-4 py-2 rounded-lg text-base font-semibold transition-colors duration-200 
-                  hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
-                  {{ request()->is(ltrim($link['url'], '/').'*')
-                    ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-700/70 dark:text-indigo-200'
-                    : 'text-gray-700 dark:text-slate-200' }}">
-          <i class="fa-solid {{ $link['icon'] }} w-5 text-center"></i>
-          <span class="font-medium">{{ $link['label'] }}</span>
-        </a>
-      @endforeach
+  {{-- Footer --}}
+  <div class="mt-auto p-4 text-[11px] text-slate-300/80 border-t border-white/10">
+    <div class="flex items-center justify-between">
+      <span>© {{ date('Y') }} PROGO</span>
+      <span class="opacity-70">v{{ app()->version() }}</span>
+    </div>
+  </div>
+</aside>
 
-      @if(auth()->check() && method_exists(auth()->user(),'hasRole') && auth()->user()->hasRole('admin'))
-        <div class="pt-3 mt-3 border-t border-gray-200 dark:border-slate-700"></div>
-        <a href="{{ url('/admin') }}"
-           class="flex items-center gap-3 px-4 py-2 rounded-lg text-base font-semibold transition-colors duration-200 
-                  hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-slate-700/60 dark:hover:text-indigo-200
-                  {{ request()->is('admin*')
-                    ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-700/70 dark:text-indigo-200'
-                    : 'text-gray-700 dark:text-slate-200' }}">
-          <i class="fa-solid fa-gear w-5 text-center"></i>
-          <span class="font-medium">Admin</span>
-        </a>
-      @endif
-    </nav>
-  </aside>
 
+  <!-- ========== MAIN ========== -->
   <div class="md:pl-64 min-h-screen flex flex-col">
 
     <header class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8
@@ -107,7 +193,7 @@
                    border-b border-gray-200 dark:border-slate-700 sticky top-0 z-20 shadow-lg">
       <div class="flex items-center gap-2">
         <button class="md:hidden p-2 rounded-md bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600"
-                @click="sidebarOpen = !sidebarOpen">
+                @click="toggleSidebar()" title="Menú">
           <i class="fa-solid fa-bars"></i>
         </button>
         <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
@@ -153,11 +239,10 @@
       @hasSection('header')
         <div class="mb-6">@yield('header')</div>
       @endif
-
       @yield('content')
     </main>
   </div>
+  @include('components.modal-remote')
   @yield('scripts')
-
 </body>
 </html>

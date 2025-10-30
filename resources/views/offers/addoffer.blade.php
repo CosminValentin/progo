@@ -6,7 +6,10 @@
       <h1 class="text-2xl font-bold">Nueva oferta</h1>
       <p class="text-sm text-gray-500 dark:text-slate-400">Completa los datos y guarda para dar de alta.</p>
     </div>
-    <a href="{{ route('offers') }}" class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
+    <a href="{{ route('offers.index') }}"
+       class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+      Volver
+    </a>
   </div>
 @endsection
 
@@ -20,13 +23,17 @@
     </div>
   @endif
 
-  <form method="POST" action="{{ route('saveoffer') }}"
+  <form method="POST" action="{{ route('offers.store') }}"
         class="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow space-y-6">
     @csrf
+
     @include('offers._form', ['companies' => $companies])
 
     <div class="flex items-center justify-end gap-2 pt-2">
-      <a href="{{ route('offers') }}" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Cancelar</a>
+      <a href="{{ route('offers.index') }}"
+         class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+        Cancelar
+      </a>
       <button class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Guardar</button>
     </div>
   </form>
