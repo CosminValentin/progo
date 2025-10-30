@@ -8,7 +8,7 @@
         Actualiza la información de <strong>{{ $offer->display_title }}</strong>.
       </p>
     </div>
-    <a href="{{ route('offers.index') }}"
+<a href="{{ route('offers') }}"
        class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
       Volver
     </a>

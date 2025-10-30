@@ -9,7 +9,7 @@
     <div class="flex gap-2">
       <a href="{{ route('offers.edit', $offer) }}"
          class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow">Editar</a>
-      <a href="{{ route('offers.index') }}"
+<a href="{{ route('offers') }}"
          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">Volver</a>
     </div>
   </div>

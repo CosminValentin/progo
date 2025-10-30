@@ -22,7 +22,6 @@
 @endsection
 
 @section('content')
-  {{-- Mensajes de error global --}}
   @if ($errors->any())
     <div class="mb-6 rounded-xl border border-rose-300 bg-rose-50 dark:border-rose-600 dark:bg-rose-900/40 
                 text-rose-800 dark:text-rose-100 p-4 shadow-sm flex gap-3">
@@ -42,7 +41,6 @@
         class="rounded-2xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 p-6 md:p-8 shadow-lg backdrop-blur-sm space-y-8 transition">
     @csrf
 
-    {{-- Encabezado visual del formulario --}}
     <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-2">
       <div class="flex items-center gap-3">
         <div class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 p-2 rounded-lg">
@@ -55,10 +53,8 @@
       </div>
     </div>
 
-    {{-- Formulario principal --}}
-    @include('agreements._form', ['companies' => $companies, 'documents' => $documents])
+    @include('agreements._form', ['agreement' => $agreement, 'companies' => $companies, 'documents' => $documents])
 
-    {{-- Acciones inferiores --}}
     <div class="pt-4 border-t border-gray-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-end gap-3">
       <a href="{{ route('agreements.index') }}"
          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 

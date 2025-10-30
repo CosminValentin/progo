@@ -41,7 +41,6 @@
         class="rounded-2xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 p-6 md:p-8 shadow-lg space-y-8 transition">
     @csrf @method('PUT')
 
-    {{-- Cabecera decorativa --}}
     <div class="flex items-center gap-3 border-b border-gray-100 dark:border-slate-700 pb-3 mb-2">
       <div class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 p-2 rounded-lg">
         <i class="fa-solid fa-file-pen text-xl"></i>

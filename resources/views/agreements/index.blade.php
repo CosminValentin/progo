@@ -89,7 +89,7 @@
 
             <td class="px-4 py-3">
               <div class="flex justify-center gap-2" x-data="{open:false}">
-                <a href="{{ route('agreements.show', $a) }}" class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition text-sm">Ver</a>
+                <a href="{{ route('agreements.view', $a) }}" class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition text-sm">Ver</a>
                 <a href="{{ route('agreements.edit', $a) }}" class="px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition text-sm">Editar</a>
 
                 <button type="button" @click="open=true"

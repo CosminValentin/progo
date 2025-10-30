@@ -29,7 +29,6 @@
 @endsection
 
 @section('content')
-  {{-- Mensajes --}}
   @if(session('success'))
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-100 shadow flex items-center gap-2">
       <i class="fa-solid fa-circle-check text-emerald-500"></i>
@@ -44,7 +43,6 @@
     </div>
   @endif
 
-  {{-- Detalle --}}
   <div class="rounded-2xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 p-6 md:p-8 shadow-lg space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -94,10 +92,12 @@
         <p class="text-base">
           @if($agreement->pdf)
             {{ $agreement->pdf->nombre_archivo }}
-            <a href="{{ route('documents.download', $agreement->pdf) }}"
-               class="ml-2 text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 text-sm">
-              <i class="fa-solid fa-download"></i> Descargar
-            </a>
+            @if(Route::has('documents.download'))
+              <a href="{{ route('documents.download', $agreement->pdf) }}"
+                 class="ml-2 text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 text-sm">
+                <i class="fa-solid fa-download"></i> Descargar
+              </a>
+            @endif
           @else
             —
           @endif
@@ -113,7 +113,6 @@
         <i class="fa-solid fa-trash-can"></i> Borrar convenio
       </button>
 
-      {{-- Modal --}}
       <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="open=false"></div>
         <div x-transition class="relative w-full max-w-md rounded-xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10">

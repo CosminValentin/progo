@@ -6,7 +6,7 @@
       <h1 class="text-2xl font-bold">Nueva oferta</h1>
       <p class="text-sm text-gray-500 dark:text-slate-400">Completa los datos y guarda para dar de alta.</p>
     </div>
-    <a href="{{ route('offers.index') }}"
+<a href="{{ route('offers') }}"
        class="px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
       Volver
     </a>
@@ -30,7 +30,7 @@
     @include('offers._form', ['companies' => $companies])
 
     <div class="flex items-center justify-end gap-2 pt-2">
-      <a href="{{ route('offers.index') }}"
+<a href="{{ route('offers') }}"
          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
         Cancelar
       </a>

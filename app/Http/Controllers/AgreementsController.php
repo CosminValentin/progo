@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agreement;
+use App\Models\Company;
+use App\Models\Document;
 use Illuminate\Http\Request;
 
 class AgreementsController extends Controller
@@ -12,53 +14,80 @@ class AgreementsController extends Controller
         $this->middleware('auth');
     }
 
-    // CREAR
-    public function store(Request $request)
+    // LISTAR
+    public function index(Request $request)
     {
-        if ($request->expectsJson() === false && $request->header('Accept') === 'application/json') {
-            $request->headers->set('X-Requested-With', 'XMLHttpRequest');
-        }
+        $q       = trim((string) $request->get('q'));
+        $total   = Agreement::count();
+        $hoy     = now()->startOfDay();
+        $vigentes = Agreement::query()
+            ->where(fn($qb) => $qb->whereNull('validez_desde')->orWhereDate('validez_desde', '<=', $hoy))
+            ->where(fn($qb) => $qb->whereNull('validez_hasta')->orWhereDate('validez_hasta', '>=', $hoy))
+            ->count();
 
-        $validated = $request->validate([
-            'company_id'      => ['nullable','integer','exists:companies,id'],
-            'fecha_firma'     => ['required','date'],
-            'firmado_agencia' => ['nullable','boolean'],
-            'firmado_empresa' => ['nullable','boolean'],
-            'validez_desde'   => ['nullable','date'],
-            'validez_hasta'   => ['nullable','date','after_or_equal:validez_desde'],
-            'pdf_doc_id'      => ['nullable','integer','exists:documents,id'],
-        ]);
+        $agreements = Agreement::query()
+            ->with(['company','pdf'])
+            ->when($q, fn($qb) => $qb->whereHas('company', fn($c) => $c->where('nombre','like',"%{$q}%")))
+            ->orderByDesc('fecha_firma')->orderByDesc('id')
+            ->paginate(15)->withQueryString();
 
-        $validated['firmado_agencia'] = $request->boolean('firmado_agencia');
-        $validated['firmado_empresa'] = $request->boolean('firmado_empresa');
+        return view('agreements.index', compact('agreements','total','vigentes'));
+    }
 
-        $agreement = Agreement::create($validated)->load('company');
+    // FORM CREAR
+    public function create()
+    {
+        $agreement = new Agreement();
+        $companies = Company::orderBy('nombre')->get();
+        $documents = Document::orderByDesc('fecha')->get();
 
-        return response()->json([
-            'id'              => $agreement->id,
-            'company_id'      => $agreement->company_id,
-            'company_nombre'  => optional($agreement->company)->nombre,
-            'fecha_firma'     => optional($agreement->fecha_firma)->format('Y-m-d'),
-            'fecha_firma_hum' => optional($agreement->fecha_firma)->format('d/m/Y'),
-            'validez_desde'   => optional($agreement->validez_desde)->format('Y-m-d'),
-            'validez_hasta'   => optional($agreement->validez_hasta)->format('Y-m-d'),
-            'firmado_agencia' => $agreement->firmado_agencia,
-            'firmado_empresa' => $agreement->firmado_empresa,
-            'pdf_doc_id'      => $agreement->pdf_doc_id,
-            'update_url'      => route('agreements.update', $agreement),
-            'delete_url'      => route('agreements.destroy', $agreement),
-        ], 201);
+        return view('agreements.create', compact('agreement','companies','documents'));
+    }
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'company_id'      => ['required','integer','exists:companies,id'],
+        'fecha_firma'     => ['required','date'],
+        'firmado_agencia' => ['nullable','boolean'],
+        'firmado_empresa' => ['nullable','boolean'],
+        'validez_desde'   => ['nullable','date'],
+        'validez_hasta'   => ['nullable','date','after_or_equal:validez_desde'],
+        'pdf_doc_id'      => ['nullable','integer','exists:documents,id'],
+    ]);
+
+    $validated['firmado_agencia'] = $request->boolean('firmado_agencia');
+    $validated['firmado_empresa'] = $request->boolean('firmado_empresa');
+
+    $agreement = \App\Models\Agreement::create($validated);
+
+    // ✅ Redirige a la página principal (index) con mensaje de éxito
+    return redirect()
+        ->route('agreements.index')
+        ->with('success', 'Convenio creado correctamente.');
+}
+    // VER (usa view.blade.php)
+    public function view(Agreement $agreement)
+    {
+        $agreement->load(['company','pdf']);
+        return view('agreements.view', compact('agreement'));
+    }
+
+    // FORM EDITAR
+    public function edit(Agreement $agreement)
+    {
+        $agreement->load(['company','pdf']);
+        $companies = Company::orderBy('nombre')->get();
+        $documents = Document::orderByDesc('fecha')->get();
+
+        return view('agreements.edit', compact('agreement','companies','documents'));
     }
 
     // ACTUALIZAR
     public function update(Request $request, Agreement $agreement)
     {
-        if ($request->expectsJson() === false && $request->header('Accept') === 'application/json') {
-            $request->headers->set('X-Requested-With', 'XMLHttpRequest');
-        }
-
         $validated = $request->validate([
-            'company_id'      => ['nullable','integer','exists:companies,id'],
+            'company_id'      => ['required','integer','exists:companies,id'],
             'fecha_firma'     => ['required','date'],
             'firmado_agencia' => ['nullable','boolean'],
             'firmado_empresa' => ['nullable','boolean'],
@@ -71,28 +100,15 @@ class AgreementsController extends Controller
         $validated['firmado_empresa'] = $request->boolean('firmado_empresa');
 
         $agreement->update($validated);
-        $agreement->load('company');
 
-        return response()->json([
-            'id'              => $agreement->id,
-            'company_id'      => $agreement->company_id,
-            'company_nombre'  => optional($agreement->company)->nombre,
-            'fecha_firma'     => optional($agreement->fecha_firma)->format('Y-m-d'),
-            'fecha_firma_hum' => optional($agreement->fecha_firma)->format('d/m/Y'),
-            'validez_desde'   => optional($agreement->validez_desde)->format('Y-m-d'),
-            'validez_hasta'   => optional($agreement->validez_hasta)->format('Y-m-d'),
-            'firmado_agencia' => $agreement->firmado_agencia,
-            'firmado_empresa' => $agreement->firmado_empresa,
-            'pdf_doc_id'      => $agreement->pdf_doc_id,
-            'update_url'      => route('agreements.update', $agreement),
-            'delete_url'      => route('agreements.destroy', $agreement),
-        ]);
+        return redirect()->route('agreements.edit', $agreement)
+            ->with('success', 'Convenio actualizado correctamente.');
     }
 
     // ELIMINAR
-    public function destroy(Request $request, Agreement $agreement)
+    public function destroy(Agreement $agreement)
     {
         $agreement->delete();
-        return response()->noContent();
+        return redirect()->route('agreements.index')->with('success', 'Convenio eliminado.');
     }
 }

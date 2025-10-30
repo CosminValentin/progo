@@ -1,7 +1,6 @@
-@props(['agreement' => null, 'companies' => collect(), 'documents' => collect()])
-
 @php
-  $a = $agreement;
+  /** @var \App\Models\Agreement|null $agreement */
+  $a = $agreement ?? null;
 @endphp
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -31,7 +30,7 @@
       Fecha de firma <span class="text-rose-600">*</span>
     </label>
     <input type="date" name="fecha_firma"
-           value="{{ old('fecha_firma', optional($a->fecha_firma ?? null)->format('Y-m-d')) }}"
+           value="{{ old('fecha_firma', optional($a?->fecha_firma)->format('Y-m-d')) }}"
            class="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
            required>
     @error('fecha_firma') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
@@ -41,7 +40,7 @@
   <div class="flex flex-wrap items-center gap-6 md:col-span-2">
     <label class="inline-flex items-center gap-2">
       <input type="checkbox" name="firmado_agencia" value="1"
-             @checked(old('firmado_agencia', (int)($a->firmado_agencia ?? 0))==1)
+             @checked((int) old('firmado_agencia', (int)($a->firmado_agencia ?? 0)) === 1)
              class="rounded border-gray-300 dark:border-slate-600">
       <span class="text-sm flex items-center gap-1">
         <i class="fa-solid fa-pen-fancy text-indigo-500"></i> Firmado Agencia
@@ -50,7 +49,7 @@
 
     <label class="inline-flex items-center gap-2">
       <input type="checkbox" name="firmado_empresa" value="1"
-             @checked(old('firmado_empresa', (int)($a->firmado_empresa ?? 0))==1)
+             @checked((int) old('firmado_empresa', (int)($a->firmado_empresa ?? 0)) === 1)
              class="rounded border-gray-300 dark:border-slate-600">
       <span class="text-sm flex items-center gap-1">
         <i class="fa-solid fa-building-circle-check text-green-500"></i> Firmado Empresa
@@ -65,7 +64,7 @@
       Validez desde
     </label>
     <input type="date" name="validez_desde"
-           value="{{ old('validez_desde', optional($a->validez_desde ?? null)->format('Y-m-d')) }}"
+           value="{{ old('validez_desde', optional($a?->validez_desde)->format('Y-m-d')) }}"
            class="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
     @error('validez_desde') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
   </div>
@@ -77,17 +76,17 @@
       Validez hasta
     </label>
     <input type="date" name="validez_hasta"
-           value="{{ old('validez_hasta', optional($a->validez_hasta ?? null)->format('Y-m-d')) }}"
+           value="{{ old('validez_hasta', optional($a?->validez_hasta)->format('Y-m-d')) }}"
            class="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2.5 shadow-inner focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
     @error('validez_hasta') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
   </div>
 
-  {{-- Separador visual --}}
+  {{-- Separador --}}
   <div class="md:col-span-2">
     <hr class="border-gray-200 dark:border-slate-700 my-4">
   </div>
 
-  {{-- Documento PDF vinculado --}}
+  {{-- Documento --}}
   <div class="md:col-span-2">
     <label class="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-1 flex items-center gap-1">
       <i class="fa-solid fa-file-pdf text-rose-500"></i>

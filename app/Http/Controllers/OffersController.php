@@ -60,12 +60,11 @@ class OffersController extends Controller
 
         Offer::create($validated);
 
-        // Si viene de modal (AJAX), devolvemos JSON y nos quedamos en la ficha
         if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
             return response()->json(['ok' => true]);
         }
 
-        return redirect()->route('offers.index')->with('success', 'Oferta creada correctamente.');
+        return redirect()->route('offers')->with('success', 'Oferta creada correctamente.');
     }
 
     public function show(Offer $offer)
@@ -99,7 +98,7 @@ class OffersController extends Controller
             return response()->json(['ok' => true]);
         }
 
-        return redirect()->route('offers.index')->with('success', 'Oferta actualizada.');
+        return redirect()->route('offers')->with('success', 'Oferta actualizada.');
     }
 
     public function destroy(Request $request, Offer $offer)
@@ -110,6 +109,6 @@ class OffersController extends Controller
             return response()->json(['ok' => true]);
         }
 
-        return redirect()->route('offers.index')->with('success', 'Oferta eliminada.');
+        return redirect()->route('offers')->with('success', 'Oferta eliminada.');
     }
 }

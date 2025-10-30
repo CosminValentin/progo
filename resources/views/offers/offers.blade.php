@@ -20,67 +20,82 @@
     </div>
   @endif
 
-  <!-- Estadísticas -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-users text-indigo-600 dark:text-indigo-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Total</div>
+{{-- Estadísticas (cards estilo moderno) --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  {{-- Total ofertas --}}
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+    <div class="flex items-center gap-4">
+      <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+        <i class="fa-solid fa-briefcase text-2xl"></i>
       </div>
-      <div class="mt-3 flex items-baseline gap-2">
-        <div class="text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ number_format($offers->total()) }}</div>
-        <span class="text-xs px-3 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">live</span>
-      </div>
-    </div>
-
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-file-alt text-blue-600 dark:text-blue-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Página</div>
-      </div>
-      <div class="mt-3 text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ $offers->currentPage() }}/{{ $offers->lastPage() }}</div>
-    </div>
-
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-green-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-eye text-green-600 dark:text-green-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Mostrando</div>
-      </div>
-      <div class="mt-3 text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ $offers->count() }}</div>
-    </div>
-
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-circle-check text-purple-600 dark:text-purple-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Estado</div>
-      </div>
-      <div class="mt-3 flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-300 text-sm">
-          <i class="fa-solid fa-circle text-[8px]"></i> Activo
-        </span>
+      <div>
+        <p class="text-sm opacity-80">Total ofertas</p>
+        <p class="text-3xl font-bold">{{ number_format($offers->total()) }}</p>
       </div>
     </div>
   </div>
 
-  <!-- Buscador -->
-  <form method="GET" action="{{ route('offers.index') }}" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+  {{-- Página actual --}}
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+    <div class="flex items-center gap-4">
+      <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+        <i class="fa-solid fa-layer-group text-2xl"></i>
+      </div>
+      <div>
+        <p class="text-sm opacity-80">Página actual</p>
+        <p class="text-3xl font-bold">{{ $offers->currentPage() }}/{{ $offers->lastPage() }}</p>
+      </div>
+    </div>
+  </div>
+
+  {{-- Mostrando --}}
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+    <div class="flex items-center gap-4">
+      <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+        <i class="fa-solid fa-eye text-2xl"></i>
+      </div>
+      <div>
+        <p class="text-sm opacity-80">Mostrando</p>
+        <p class="text-3xl font-bold">{{ $offers->count() }}</p>
+      </div>
+    </div>
+  </div>
+
+  {{-- Estado --}}
+  <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-pink-600 to-red-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+    <div class="flex items-center gap-4">
+      <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+        <i class="fa-solid fa-circle-check text-2xl"></i>
+      </div>
+      <div>
+        <p class="text-sm opacity-80">Estado</p>
+        <p class="text-3xl font-bold">Activo</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Buscador instantáneo -->
+  <form id="offersSearchForm" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4" onsubmit="return false;">
     <div class="col-span-2">
       <div class="relative">
-        <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Buscar por DNI/NIE, nombre o email…"
-              class="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm px-10 py-3 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-md transition-all duration-300 hover:shadow-lg">
+        <input type="text" id="offersSearchInput" placeholder="Buscar por puesto, empresa, ubicación…"
+               class="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm px-10 py-3 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-md transition-all duration-300 hover:shadow-lg">
         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
       </div>
     </div>
     <div class="flex gap-3">
-      <button class="flex-1 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Buscar</button>
-      <a href="{{ route('offers.index') }}"
-        class="flex-1 px-5 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Limpiar</a>
+      <button type="button" id="offersSearchButton"
+              class="flex-1 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Buscar</button>
+      <button type="button" id="offersClearButton"
+              class="flex-1 px-5 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300 shadow-md focus:ring-2 focus:ring-indigo-500">Limpiar</button>
     </div>
   </form>
 
   <!-- Tabla -->
   <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl">
-    <table class="min-w-full">
+    <table id="offersTable" class="min-w-full">
       <thead class="bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 text-left text-xs font-semibold uppercase tracking-wide text-indigo-700 dark:text-slate-200">
         <tr>
           <th class="px-5 py-3">Fecha</th>
@@ -143,4 +158,27 @@
   <div class="mt-6">
     {{ $offers->links() }}
   </div>
+@endsection
+
+@section('scripts')
+<script>
+  // Buscador instantáneo estilo convenios
+  document.addEventListener('DOMContentLoaded', () => {
+    const input  = document.querySelector('#offersSearchInput');
+    const btn    = document.querySelector('#offersSearchButton');
+    const clear  = document.querySelector('#offersClearButton');
+    const rows   = () => document.querySelectorAll('#offersTable tbody tr');
+
+    const filter = () => {
+      const q = (input?.value || '').toLowerCase().trim();
+      rows().forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = q === '' ? '' : (text.includes(q) ? '' : 'none');
+      });
+    };
+    input?.addEventListener('input', filter);
+    btn?.addEventListener('click', filter);
+    clear?.addEventListener('click', () => { input.value=''; filter(); });
+  });
+</script>
 @endsection
