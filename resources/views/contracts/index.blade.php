@@ -16,15 +16,23 @@
 
 @section('content')
   {{-- Cards --}}
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
     <div class="rounded-2xl p-6 text-white bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 shadow">
       <p class="text-sm opacity-80">Total</p>
       <p class="text-3xl font-bold">{{ $total }}</p>
+      <span class="text-xs px-3 py-1 rounded bg-white/20">Contracto registradas</span>
     </div>
+
+    <!-- Empresas vigentes -->
     <div class="rounded-2xl p-6 text-white bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 shadow">
       <p class="text-sm opacity-80">Vigentes</p>
       <p class="text-3xl font-bold">{{ $vigentes }}</p>
+      <span class="text-xs px-3 py-1 rounded bg-white/20">Activas actualmente</span>
     </div>
+
+
+
+    
   </div>
 
   {{-- Flash --}}

@@ -16,15 +16,33 @@
 
 @section('content')
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-    <div class="rounded-2xl p-6 text-white bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 shadow">
-      <p class="text-sm opacity-80">Total registros</p>
-      <p class="text-3xl font-bold">{{ $total }}</p>
+    <!-- Total registros -->
+    <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+      <div class="flex items-center gap-4">
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-database text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Total registros</p>
+          <p class="text-3xl font-bold">{{ $total }}</p>
+        </div>
+      </div>
     </div>
-    <div class="rounded-2xl p-6 text-white bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 shadow">
-      <p class="text-sm opacity-80">Válidos 90 días</p>
-      <p class="text-3xl font-bold">{{ $validos90 }}</p>
+
+    <!-- Válidos 90 días -->
+    <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
+      <div class="flex items-center gap-4">
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-check-circle text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Válidos 90 días</p>
+          <p class="text-3xl font-bold">{{ $validos90 }}</p>
+        </div>
+      </div>
     </div>
   </div>
+
 
   @if(session('success'))
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900 dark:text-emerald-100 shadow">

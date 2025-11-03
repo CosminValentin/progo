@@ -59,22 +59,7 @@
 
 
 @section('header')
-<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-  <div>
-    <h1 class="text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tracking-tight">{{ $participant->nombre }}</h1>
-    <p class="text-sm text-gray-500 dark:text-slate-400">DNI/NIE: {{ $participant->dni_nie }}</p>
-  </div>
-  <div class="flex gap-4 mt-4 sm:mt-0">
-    <a href="{{ route('editparticipant', $participant) }}"
-       class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-xl hover:from-indigo-700 hover:to-indigo-800 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-      Editar
-    </a>
-    <a href="{{ route('participants') }}"
-       class="px-6 py-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
-      Volver
-    </a>
-  </div>
-</div>
+
 
 @if($nextIc)
   <div id="ic-next"

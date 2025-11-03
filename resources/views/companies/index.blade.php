@@ -23,48 +23,29 @@
       {{ session('error') }}
     </div>
   @endif
-
-  <!-- Estadísticas -->
+@section('content')
+@section('content')
+  <!-- Estadísticas de compañías -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-users text-indigo-600 dark:text-indigo-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Total</div>
-      </div>
-      <div class="mt-3 flex items-baseline gap-2">
-        <div class="text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ number_format($companies->total()) }}</div>
-        <span class="text-xs px-3 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">live</span>
-      </div>
+    <div class="rounded-2xl p-6 text-white bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 shadow">
+      <p class="text-sm opacity-80">Total</p>
+      <p class="text-3xl font-bold">{{ number_format($companies->total()) }} empresas</p>
+      <span class="text-xs px-3 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">live</span>
     </div>
 
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-file-alt text-blue-600 dark:text-blue-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Página</div>
-      </div>
-      <div class="mt-3 text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ $companies->currentPage() }}/{{ $companies->lastPage() }}</div>
-    </div>
-
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-green-50 to-green-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-eye text-green-600 dark:text-green-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Mostrando</div>
-      </div>
-      <div class="mt-3 text-3xl font-semibold text-gray-800 dark:text-slate-100">{{ $companies->count() }}</div>
-    </div>
-
-    <div class="rounded-xl border border-gray-200 dark:border-slate-700 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-slate-700/50 dark:to-slate-800 p-5 shadow-lg hover:shadow-2xl transition">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-circle-check text-purple-600 dark:text-purple-300 text-xl"></i>
-        <div class="text-sm text-gray-500 dark:text-slate-400">Estado</div>
-      </div>
-      <div class="mt-3 flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-300 text-sm">
-          <i class="fa-solid fa-circle text-[8px]"></i> Activo
-        </span>
-      </div>
-    </div>
   </div>
+
+  @if(session('success'))
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900 dark:text-emerald-100 shadow">
+      {{ session('success') }}
+    </div>
+  @endif
+  @if(session('error'))
+    <div class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-800 dark:border-rose-600 dark:bg-rose-900 dark:text-rose-100 shadow">
+      {{ session('error') }}
+    </div>
+  @endif
+
 
 
 

@@ -16,28 +16,55 @@
 @section('content')
   {{-- Cards --}}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <!-- Total registros -->
     <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-database text-2xl"></i></div>
-        <div><p class="text-sm opacity-80">Total registros</p><p class="text-3xl font-bold">{{ $totalRegistros }}</p></div>
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-database text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Total registros</p>
+          <p class="text-3xl font-bold">{{ $totalRegistros }}</p>
+        </div>
       </div>
     </div>
+
+    <!-- Regímenes "alta" -->
     <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-user-check text-2xl"></i></div>
-        <div><p class="text-sm opacity-80">Regímenes "alta"</p><p class="text-3xl font-bold">{{ $conRegimenAlta }}</p></div>
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-user-check text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Regímenes "alta"</p>
+          <p class="text-3xl font-bold">{{ $conRegimenAlta }}</p>
+        </div>
       </div>
     </div>
+
+    <!-- Suma días alta -->
     <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-calendar-day text-2xl"></i></div>
-        <div><p class="text-sm opacity-80">Suma días alta</p><p class="text-3xl font-bold">{{ $sumDiasAlta }}</p></div>
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-calendar-day text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Suma días alta</p>
+          <p class="text-3xl font-bold">{{ $sumDiasAlta }}</p>
+        </div>
       </div>
     </div>
+
+    <!-- Suma jornadas -->
     <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-pink-600 to-red-600 p-6 text-white shadow-lg hover:shadow-xl transition-all">
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-hourglass-half text-2xl"></i></div>
-        <div><p class="text-sm opacity-80">Suma jornadas</p><p class="text-3xl font-bold">{{ $sumJornadas }}</p></div>
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+          <i class="fa-solid fa-hourglass-half text-2xl"></i>
+        </div>
+        <div>
+          <p class="text-sm opacity-80">Suma jornadas</p>
+          <p class="text-3xl font-bold">{{ $sumJornadas }}</p>
+        </div>
       </div>
     </div>
   </div>

@@ -29,22 +29,23 @@
 
   {{-- Flash --}}
   @if(session('success'))
-    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900 dark:text-emerald-100 shadow">
+    <div role="alert" class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-900 dark:text-emerald-100 shadow">
       {{ session('success') }}
     </div>
   @endif
   @if(session('error'))
-    <div class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-800 dark:border-rose-600 dark:bg-rose-900 dark:text-rose-100 shadow">
+    <div role="alert" class="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-800 dark:border-rose-600 dark:bg-rose-900 dark:text-rose-100 shadow">
       {{ session('error') }}
     </div>
   @endif
 
-  {{-- 🔍 Buscador instantáneo (client-side, como en participantes) --}}
+  {{-- 🔍 Buscador instantáneo --}}
   <form id="docsSearchForm" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4" onsubmit="return false;">
     <div class="col-span-2">
       <div class="relative">
         <input type="text" id="docsSearchInput" name="q"
                placeholder="Buscar por nombre, tipo, propietario o usuario…"
+               aria-label="Buscar documentos"
                class="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm px-10 py-3 placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-md transition-all duration-300 hover:shadow-lg">
         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
       </div>
@@ -66,12 +67,12 @@
     <table id="documentsTable" class="min-w-full table-auto border-collapse">
       <thead class="bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-slate-700/50 dark:to-slate-800 text-xs font-semibold uppercase text-indigo-700 dark:text-slate-200">
         <tr>
-          <th class="px-4 py-3 text-left w-28">Fecha</th>
-          <th class="px-4 py-3 text-left">Nombre</th>
-          <th class="px-4 py-3 text-left w-32">Tipo</th>
-          <th class="px-4 py-3 text-left w-40">Propietario</th>
-          <th class="px-4 py-3 text-left w-40">Subido por</th>
-          <th class="px-4 py-3 text-center w-44">Acciones</th>
+          <th scope="col" class="px-4 py-3 text-left w-28">Fecha</th>
+          <th scope="col" class="px-4 py-3 text-left">Nombre</th>
+          <th scope="col" class="px-4 py-3 text-left w-32">Tipo</th>
+          <th scope="col" class="px-4 py-3 text-left w-40">Propietario</th>
+          <th scope="col" class="px-4 py-3 text-left w-40">Subido por</th>
+          <th scope="col" class="px-4 py-3 text-center w-44">Acciones</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100 dark:divide-slate-700 text-sm">
@@ -99,15 +100,10 @@
                    class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition text-sm">
                   Descargar
                 </a>
-                <form method="POST" action="{{ route('documents.destroy', $d) }}"
-                      onsubmit="return confirm('¿Eliminar el documento?');">
-                  @csrf @method('DELETE')
-                  <button
-                    class="px-3 py-1.5 rounded-lg {{ $d->protegido ? 'cursor-not-allowed opacity-60 bg-red-100/60 text-red-400' : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50' }} transition text-sm"
-                    {{ $d->protegido ? 'disabled' : '' }}>
-                    Borrar
-                  </button>
-                </form>
+                <button type="button" class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition text-sm"
+                        onclick="openDeleteModal({{ $d->id }}, '{{ $d->nombre_archivo }}')">
+                  Borrar
+                </button>
               </div>
             </td>
           </tr>
@@ -123,38 +119,55 @@
   <div class="mt-6">
     {{ $docs->links() }}
   </div>
+
+  {{-- Modal de confirmación --}}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center">
+  <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-md w-full p-6 transform scale-90 opacity-0 transition-all duration-200 ease-out"
+       id="deleteModalContent">
+    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Confirmar eliminación</h2>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">¿Seguro que deseas eliminar el documento <span id="docName" class="font-semibold"></span>?</p>
+    <div class="flex justify-end gap-3">
+      <button onclick="closeDeleteModal()" class="px-5 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition">
+        Cancelar
+      </button>
+      <form id="deleteForm" method="POST" class="inline">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">Eliminar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
-  // --- Buscador instantáneo (cliente) ---
-  function initDocsSearchForm() {
-    const form = document.querySelector('#docsSearchForm');
-    form?.addEventListener('submit', e => e.preventDefault());
+  // Abrir modal con animación
+  function openDeleteModal(id, name) {
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
+    document.getElementById('docName').textContent = name;
+    document.getElementById('deleteForm').action = `/documents/${id}`;
+    
+    modal.classList.remove('hidden');
+    // Animación
+    setTimeout(() => {
+      content.classList.remove('scale-90', 'opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+    }, 10);
   }
 
-  function initDocsSearchInput() {
-    const input   = document.querySelector('#docsSearchInput');
-    const button  = document.querySelector('#docsSearchButton');
-    const clear   = document.querySelector('#docsClearButton');
-    const rows    = () => document.querySelectorAll('#documentsTable tbody tr');
+  // Cerrar modal con animación
+  function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
 
-    const filter = () => {
-      const q = (input?.value || '').toLowerCase().trim();
-      rows().forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = q === '' ? '' : (text.includes(q) ? '' : 'none');
-      });
-    };
+    content.classList.add('scale-90', 'opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
 
-    input?.addEventListener('input', filter);
-    button?.addEventListener('click', filter);
-    clear?.addEventListener('click', () => { input.value = ''; filter(); });
+    setTimeout(() => modal.classList.add('hidden'), 200);
   }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    initDocsSearchForm();
-    initDocsSearchInput();
-  });
 </script>
 @endsection
+  

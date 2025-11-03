@@ -28,21 +28,7 @@
 <div x-data="notaForm()" class="space-y-8">
 
   {{-- Header vistoso --}}
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 p-6 text-white shadow">
-    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_left,white,transparent_60%)]"></div>
-    <div class="relative z-10 flex items-center gap-4">
-      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-        <i class="fa-solid fa-note-sticky text-2xl"></i>
-      </div>
-      <div>
-        <h2 class="text-xl font-semibold">
-          @if(isset($nota)) Editar nota @else Nueva nota @endif
-          @if($isModal)<span class="text-white/70 text-sm ml-1">(modal)</span>@endif
-        </h2>
-        <p class="text-sm text-white/80">Completa la información de la nota interna.</p>
-      </div>
-    </div>
-  </div>
+
 
   {{-- Campos --}}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -115,19 +101,19 @@
   </div>
 
   {{-- Estado --}}
-  <div class="md:w-1/2">
-    <label class="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-slate-300">
-      <i class="fa-solid fa-circle-half-stroke text-indigo-600"></i>
-      Estado (opcional)
-    </label>
-    <div class="relative">
-      <i class="fa-solid fa-tag absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
-      <input type="text" name="estado" value="{{ old('estado', $nota->estado ?? '') }}"
-             class="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 pl-10 pr-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm"
-             placeholder="p.ej. activo, seguimiento, cerrado"/>
-    </div>
-    @error('estado') <p class="text-rose-600 text-sm mt-1">{{ $message }}</p> @enderror
-  </div>
+{{-- Campo Estado --}}
+<div class="mb-4">
+  <label for="estado" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Estado</label>
+  <select name="estado" id="estado"
+          class="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm transition">
+    <option value="activo" {{ old('estado', $nota?->estado ?? '') === 'activo' ? 'selected' : '' }}>Activo</option>
+    <option value="inactivo" {{ old('estado', $nota?->estado ?? '') === 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+  </select>
+  @error('estado')
+    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+  @enderror
+</div>
+
 
   {{-- Footer --}}
   <div class="sticky bottom-4 z-10">
