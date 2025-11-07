@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -6,16 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 class Document extends Model
 {
     protected $table = 'documents';
-    protected $primaryKey = 'id';
-    public $timestamps = false;
+    public $timestamps = false; // la tabla usa 'fecha' en vez de created_at/updated_at
 
     protected $fillable = [
-        'owner_type','owner_id','tipo','nombre_archivo',
-        'hash','uploader_id','fecha','protegido',
+        'owner_type',
+        'owner_id',
+        'tipo',
+        'nombre_archivo',
+        'hash',
+        'uploader_id',
+        'fecha',
+        'protegido',
     ];
 
     protected $casts = [
         'fecha' => 'datetime',
         'protegido' => 'boolean',
     ];
+    
+    // Polimórfica con morphMap (AppServiceProvider->Relation::enforceMorphMap([...]))
+    public function owner()
+    {
+        return $this->morphTo(null, 'owner_type', 'owner_id');
+    }
+
+    public function uploader()
+    {
+        return $this->belongsTo(User::class, 'uploader_id');
+    }
+
+    /* Scopes útiles */
+    public function scopeCv($q)
+    {
+        return $q->where('tipo','cv')->where('owner_type','participants');
+    }
 }
