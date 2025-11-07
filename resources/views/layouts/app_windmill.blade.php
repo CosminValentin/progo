@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
       x-data="{
-        dark:false, sidebarOpen:false, nav:{gestion:true, docs:true},
+        dark:false, sidebarOpen:false, nav:{gestion:true, docs:true, users:true},
         init(){
           const savedDark = localStorage.getItem('darkMode');
           const savedSide = localStorage.getItem('sidebarOpen');
@@ -63,22 +63,34 @@
     'gestion' => [
       'label' => 'Gestión',
       'items' => [
-        ['url'=>'/participants',        'label'=>'Personas participantes',        'icon'=>'fa-users',           'match'=>'participants*'],
-        ['url'=>'/companies',           'label'=>'Empresas',             'icon'=>'fa-building',        'match'=>'companies*'],
-        ['url'=>'/agreements',          'label'=>'Convenios con empresas',            'icon'=>'fa-handshake',       'match'=>'agreements*'],
-        ['url'=>'/offers',              'label'=>'Ofertas de empleo',              'icon'=>'fa-briefcase',       'match'=>'offers*'],
-        ['url'=>'/applications',        'label'=>'Solicitudes o Candidaturas',         'icon'=>'fa-user-check',      'match'=>'applications*'],
-        ['url'=>'/contracts',           'label'=>'Contratos laborales',            'icon'=>'fa-file-signature',  'match'=>'contracts*'],
-        ['url'=>'/ss-records',          'label'=>'Altas Seguridad Social',         'icon'=>'fa-shield-halved',   'match'=>'ss-records*'],
-        ['url'=>'/insertion_checks',    'label'=>'Seguimiento laboral','icon'=>'fa-circle-check',   'match'=>'insertion_checks*'],
+        ['url'=>'/participants',        'label'=>'Personas participantes', 'icon'=>'fa-users',           'match'=>'participants*'],
+        ['url'=>'/companies',           'label'=>'Empresas',               'icon'=>'fa-building',        'match'=>'companies*'],
+        ['url'=>'/agreements',          'label'=>'Convenios con empresas', 'icon'=>'fa-handshake',       'match'=>'agreements*'],
+        ['url'=>'/offers',              'label'=>'Ofertas de empleo',      'icon'=>'fa-briefcase',       'match'=>'offers*'],
+        ['url'=>'/applications',        'label'=>'Solicitudes o Candidaturas', 'icon'=>'fa-user-check', 'match'=>'applications*'],
+        ['url'=>'/contracts',           'label'=>'Contratos laborales',    'icon'=>'fa-file-signature',  'match'=>'contracts*'],
+        ['url'=>'/ss-records',          'label'=>'Altas Seguridad Social', 'icon'=>'fa-shield-halved',   'match'=>'ss-records*'],
+        ['url'=>'/insertion_checks',    'label'=>'Seguimiento laboral',    'icon'=>'fa-circle-check',    'match'=>'insertion_checks*'],
       ],
     ],
     'docs' => [
       'label' => 'Documentos',
       'items' => [
-        ['url'=>'/documents',           'label'=>'Documentos',           'icon'=>'fa-folder-open',     'match'=>'documents*'],
-        ['url'=>'/cvs',                 'label'=>'CVs',                  'icon'=>'fa-file-lines',      'match'=>'cvs*'],
-        ['url'=>'/notas',               'label'=>'Notas de Trabajador',  'icon'=>'fa-note-sticky',     'match'=>'notas*'],
+        ['url'=>'/documents',           'label'=>'Documentos',           'icon'=>'fa-folder-open', 'match'=>'documents*'],
+        ['url'=>'/cvs',                 'label'=>'CVs',                  'icon'=>'fa-file-lines',  'match'=>'cvs*'],
+        ['url'=>'/notas',               'label'=>'Notas de Trabajador',  'icon'=>'fa-note-sticky', 'match'=>'notas*'],
+      ],
+    ],
+    // === NUEVO GRUPO: Usuarios (export) ===
+    'users' => [
+      'label' => 'Usuarios (export)',
+      'items' => [
+        // Ver (preview en nueva pestaña)
+        ['url'=>'/usuarios/export?format=json&preview=1', 'label'=>'Ver usuarios JSON',       'icon'=>'fa-eye',      'match'=>'usuarios/export*'],
+        ['url'=>'/usuarios/export?format=xml&preview=1',  'label'=>'Ver usuarios XML',        'icon'=>'fa-eye',      'match'=>'usuarios/export*'],
+        // Descargar
+        ['url'=>'/usuarios/export?format=json',           'label'=>'Descargar usuarios JSON', 'icon'=>'fa-download', 'match'=>'usuarios/export*'],
+        ['url'=>'/usuarios/export?format=xml',            'label'=>'Descargar usuarios XML',  'icon'=>'fa-download', 'match'=>'usuarios/export*'],
       ],
     ],
   ];
@@ -100,7 +112,7 @@
   {{-- Menú --}}
   <nav class="px-3 py-4 space-y-3">
 
-    {{-- Dashboard (opcional) --}}
+    {{-- Dashboard --}}
     <a href="{{ url('/home') }}"
        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[15px] font-medium
               hover:bg-white/10 transition
@@ -172,6 +184,43 @@
         </ul>
       </div>
     </div>
+
+    {{-- === NUEVO GRUPO: Usuarios (export) === --}}
+    <div>
+      <button type="button"
+              @click="toggleGroup('users')"
+              class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left
+                     text-[15px] font-semibold tracking-normal"
+              :class="nav.users ? 'bg-sky-600 text-white shadow-inner' : 'text-slate-100 hover:bg-white/10 transition'">
+        <span class="inline-flex items-center gap-3">
+          <i class="fa-solid fa-user-gear w-5 text-center"></i>
+          <span class="leading-tight">{{ $nav['users']['label'] }}</span>
+        </span>
+        <i class="fa-solid fa-chevron-up text-xs transition" :class="nav.users ? 'rotate-0' : 'rotate-180'"></i>
+      </button>
+
+      <div x-cloak x-show="nav.users" x-collapse>
+        <ul class="mt-2 space-y-2">
+          @foreach($nav['users']['items'] as $link)
+            @php $active = $isActive($link['match']); @endphp
+            <li>
+              @php
+                // Para “Ver …” abrimos en nueva pestaña (preview=1 en la URL)
+                $isPreview = str_contains($link['url'], 'preview=1');
+              @endphp
+              <a href="{{ url($link['url']) }}" {{ $isPreview ? 'target=_blank rel=noopener' : '' }}
+                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg ml-2 transition
+                        {{ $active ? 'bg-sky-600 text-white shadow-inner'
+                                   : 'text-slate-200 hover:bg-white/10' }}">
+                <i class="fa-solid {{ $link['icon'] }} w-5 text-center opacity-90"></i>
+                <span class="text-[15px]">{{ $link['label'] }}</span>
+              </a>
+            </li>
+          @endforeach
+        </ul>
+      </div>
+    </div>
+
   </nav>
 
   {{-- Footer --}}

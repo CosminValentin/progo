@@ -2,41 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Los atributos que son asignables masivamente.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'dni',
+        'first_name',
+        'last_name1',
+        'last_name2',
+        'birth_date',
+        'gender',
+        'education_level',
+        'eu_resident',
     ];
 
-    /**
-     * Los atributos que deben ser ocultados para los arreglos.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password','remember_token'];
 
-    /**
-     * Los atributos que deberían ser convertidos a tipos nativos.
-     *
-     * @var array<int, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'birth_date'        => 'date',
+        'eu_resident'       => 'boolean',
     ];
 }

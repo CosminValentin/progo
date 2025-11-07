@@ -847,8 +847,10 @@
 {{-- === Modal: Crear Seguimiento Laboral === --}}
 <div x-data="{ open:false }" x-on:open-crear-ic.window="open=true" x-cloak>
   <div x-show="open" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="open" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
+  {{-- WRAPPER CENTRADO CON GRID --}}
+  <div x-show="open" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    {{-- PANEL CON ALTURA MÁXIMA Y SCROLL INTERNO --}}
+    <div class="w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       {{-- Header --}}
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-indigo-600/10 to-purple-600/10">
         <div class="flex items-center gap-2">
@@ -948,8 +950,10 @@
 {{-- === Modal: Editar Seguimiento Laboral === --}}
 <div x-data="{ open:false, ic:{} }" x-on:open-editar-ic.window="ic=$event.detail; open=true" x-cloak>
   <div x-show="open" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="open" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
+  {{-- WRAPPER CENTRADO CON GRID --}}
+  <div x-show="open" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    {{-- PANEL CON ALTURA MÁXIMA Y SCROLL INTERNO --}}
+    <div class="w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-indigo-600/10 to-purple-600/10">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-pen-to-square text-indigo-600"></i>
@@ -1048,7 +1052,8 @@
 {{-- === Modal: Eliminar Seguimiento Laboral === --}}
 <div x-data="{ open:false, delete_url:'' }" x-on:open-eliminar-ic.window="delete_url=$event.detail.delete_url; open=true" x-cloak>
   <div x-show="open" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  {{-- WRAPPER CENTRADO UNIFICADO --}}
+  <div x-show="open" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden ring-1 ring-black/5">
       <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-rose-600/10 to-orange-600/10">
         <div class="flex items-center gap-2">
@@ -1096,11 +1101,10 @@
 {{-- ==================== MODALES: SEGURIDAD SOCIAL ==================== --}}
 
 {{-- Crear SS --}}
-{{-- Crear SS --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-ss.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Añadir registro de S.S.</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1167,8 +1171,8 @@
 {{-- Editar SS --}}
 <div x-data="{ isOpen:false, ss:{} }" x-on:open-editar-ss.window="ss=$event.detail; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar registro de S.S.</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1235,8 +1239,8 @@
 {{-- Eliminar SS --}}
 <div x-data="{ isOpen:false, delete_url:'' }" x-on:open-eliminar-ss.window="delete_url=$event.detail.delete_url; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar registro de S.S.?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -1263,8 +1267,8 @@
 {{-- Crear Nota --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-nota.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear Nueva Nota</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1311,8 +1315,8 @@
      x-on:open-editar-nota.window="note=$event.detail;isEditOpen=true"
      x-cloak>
   <div x-show="isEditOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isEditOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isEditOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar Nota</h3>
         <button @click="isEditOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1358,8 +1362,8 @@
      x-on:open-eliminar-nota.window="delete_url=$event.detail.delete_url;isDeleteOpen=true"
      x-cloak>
   <div x-show="isDeleteOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isDeleteOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isDeleteOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar esta nota?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -1367,7 +1371,7 @@
           const fd=new FormData();fd.append('_token','{{ csrf_token() }}');fd.append('_method','DELETE');
           fetch(delete_url,{method:'POST',headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'},body:fd})
             .then(r=>{ if(!r.ok && r.status!==204) throw new Error('Error al eliminar'); })
-            .then(()=>{isDeleteOpen=false;showToast('Nota eliminada', true);setTimeout(()=>window.location.reload(),350);})
+            .then(()=>{isDeleteOpen=false;showToast('Nota eliminado', true);setTimeout(()=>window.location.reload(),350);})
             .catch(e=>showToast(e.message||'Error al eliminar', false));
         ">
         <div class="flex justify-center gap-3">
@@ -1384,8 +1388,8 @@
 {{-- Crear Empresa --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-empresa.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear Empresa</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1447,8 +1451,8 @@
      x-on:open-editar-empresa.window="empresa=$event.detail; isOpen=true"
      x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar Empresa</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1458,7 +1462,6 @@
         @submit.prevent="
           const fd = new FormData($event.target);
           fd.append('_token','{{ csrf_token() }}');
-          // Si tu ruta espera PUT, descomenta la siguiente línea:
           // fd.append('_method','PUT');
           fetch(empresa.update_url, { method:'POST', headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}, body: fd })
             .then(async r => { if(!r.ok){ let m='Error al actualizar empresa'; try{const j=await r.json(); if(j?.message)m=j.message;}catch{} throw new Error(m);} })
@@ -1512,8 +1515,8 @@
      x-on:open-eliminar-empresa.window="delete_url=$event.detail.delete_url; isOpen=true"
      x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar esta empresa?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -1538,8 +1541,8 @@
 {{-- Crear Convenio --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-convenio.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear Convenio</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1628,8 +1631,8 @@
      x-on:open-editar-convenio.window="conv=$event.detail; isOpen=true"
      x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar Convenio</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1719,8 +1722,8 @@
      x-on:open-eliminar-convenio.window="delete_url=$event.detail.delete_url; isOpen=true"
      x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar este convenio?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -1745,8 +1748,8 @@
 {{-- Subir CV --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-cv.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Subir CV</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1797,8 +1800,8 @@
 {{-- Editar CV --}}
 <div x-data="{ isOpen:false, cv:{} }" x-on:open-editar-cv.window="cv=$event.detail; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar CV</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1852,8 +1855,8 @@
      x-on:open-eliminar-cv.window="delete_url=$event.detail.delete_url; protegido=!!$event.detail.protegido; isOpen=true"
      x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar este CV?</h3>
       <template x-if="protegido">
         <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mb-4">
@@ -1887,8 +1890,8 @@
 {{-- Crear Offer --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-offer.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear oferta</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -1953,8 +1956,8 @@
 {{-- Editar Offer --}}
 <div x-data="{ isOpen:false, offer:{} }" x-on:open-editar-offer.window="offer=$event.detail; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar oferta</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -2022,8 +2025,8 @@
 {{-- Eliminar Offer --}}
 <div x-data="{ isOpen:false, delete_url:'' }" x-on:open-eliminar-offer.window="delete_url=$event.detail.delete_url; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar esta oferta?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -2048,8 +2051,8 @@
 {{-- Crear Contrato --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-contrato.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear contrato</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -2145,8 +2148,8 @@
 {{-- Editar Contrato --}}
 <div x-data="{ isOpen:false, ctr:{} }" x-on:open-editar-contrato.window="ctr=$event.detail; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar contrato</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -2242,8 +2245,8 @@
 {{-- Eliminar Contrato --}}
 <div x-data="{ isOpen:false, delete_url:'' }" x-on:open-eliminar-contrato.window="delete_url=$event.detail.delete_url; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar este contrato?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -2262,11 +2265,12 @@
     </div>
   </div>
 </div>
+
 {{-- Crear Candidatura --}}
 <div x-data="{ isOpen:false }" x-on:open-crear-app.window="isOpen = true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Crear candidatura</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -2326,8 +2330,8 @@
 {{-- Editar Candidatura --}}
 <div x-data="{ isOpen:false, app:{} }" x-on:open-editar-app.window="app=$event.detail; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 p-4 sm:p-6 overflow-auto">
-    <div class="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4 sm:p-6">
+    <div class="mx-auto w-full max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-black/5">
       <div class="flex items-center justify-between px-6 py-4 border-b dark:border-slate-700">
         <h3 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">Editar candidatura</h3>
         <button @click="isOpen=false"><i class="fa-solid fa-xmark"></i></button>
@@ -2337,7 +2341,6 @@
           const fd = new FormData($event.target);
           fd.append('_token','{{ csrf_token() }}');
           fd.append('_method','PUT');
-          // AÑADIMOS participant_id PARA CUMPLIR LA VALIDACIÓN
           fd.append('participant_id','{{ $participant->id }}');
           fetch(app.update_url, {
               method:'POST',
@@ -2389,8 +2392,8 @@
 {{-- Eliminar Candidatura --}}
 <div x-data="{ isOpen:false, delete_url:'' }" x-on:open-eliminar-app.window="delete_url=$event.detail.delete_url; isOpen=true" x-cloak>
   <div x-show="isOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/40"></div>
-  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center">
+  <div x-show="isOpen" x-transition class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 text-center ring-1 ring-black/5">
       <h3 class="text-lg font-semibold mb-2">¿Eliminar esta candidatura?</h3>
       <p class="text-sm text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
       <form x-data
@@ -2415,6 +2418,7 @@
     </div>
   </div>
 </div>
+
 {{-- ======= TOASTS ======= --}}
 <div x-data x-ref="toaster" class="fixed bottom-6 right-6 z-[120]" style="display:none"></div>
 
@@ -2430,7 +2434,6 @@
     setTimeout(()=>{ box.remove(); if(!host.childElementCount){ host.style.display='none'; } }, 2200);
   }
 
-    // Alerta bonita y grande
   function showBigAlert(msg, ok=true){
     const host = document.querySelector('[x-ref=toaster]');
     if(!host) return;
@@ -2455,18 +2458,15 @@
     setTimeout(()=>{ box.remove(); if(!host.childElementCount){ host.style.display='none'; } }, 8000);
   }
 
-  // A los 10s: calcula días restantes del seguimiento más reciente (fecha + dias_validos)
   window.addEventListener('DOMContentLoaded', () => {
     const anchor = document.getElementById('ic-next');
     if(!anchor) return;
 
-    const rawFecha = anchor.dataset.fecha;  // 'YYYY-MM-DD'
+    const rawFecha = anchor.dataset.fecha;
     const rawDias  = parseInt(anchor.dataset.dias||'0',10);
-
     if(!rawFecha || !rawDias || isNaN(rawDias) || rawDias<=0) return;
 
-    // target = fecha + dias_validos (al final del día)
-    const parts = rawFecha.split('-'); // Y, M, D
+    const parts = rawFecha.split('-');
     const start = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
     const target = new Date(start.getTime());
     target.setDate(start.getDate() + rawDias);
@@ -2483,7 +2483,7 @@
       } else {
         showBigAlert(`El seguimiento <b>ya ha vencido</b> hace ${Math.abs(daysLeft)} día(s).`, false);
       }
-    }, 10000); // 10s
+    }, 10000);
   });
 </script>
 
@@ -2495,3 +2495,4 @@
 .badge-estado { @apply inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold; }
 </style>
 @endsection
+

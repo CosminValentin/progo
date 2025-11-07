@@ -7,10 +7,19 @@
       <p class="text-sm text-gray-600 dark:text-slate-400">Listado y búsqueda rápida.</p>
     </div>
 
-    <a href="{{ route('cvs.create') }}"
-       class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow">
-      <i class="fa-solid fa-upload"></i> Subir CV
-    </a>
+    <div class="flex flex-wrap gap-2">
+      {{-- 🔹 Nuevo botón para generar CV automáticamente --}}
+      <a href="{{ route('cv.generate') }}"
+         class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 shadow">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generar CV
+      </a>
+
+      {{-- Botón ya existente para subir CV --}}
+      <a href="{{ route('cvs.create') }}"
+         class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow">
+        <i class="fa-solid fa-upload"></i> Subir CV
+      </a>
+    </div>
   </div>
 @endsection
 
